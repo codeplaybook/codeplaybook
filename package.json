@@ -1,6 +1,6 @@
 {
   "name": "codeplaybook",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Agent-agnostic coding standards and commands for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.",
   "bin": {
     "codeplaybook": "./bin/cli.js"

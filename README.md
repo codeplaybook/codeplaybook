@@ -1,8 +1,39 @@
 # Codeplaybook
 
-Agent-agnostic coding standards for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.
+**Your coding standards, written once, deployed to every AI agent.**
 
-Discover patterns from existing code or prescribe architecture upfront. Standards live in `.codeplaybook/` as plain markdown -- portable, editable, and not locked into any single tool.
+### The problem
+
+Your AI agent writes code that *works* — but over time, your codebase turns into a mess:
+
+- Services that mix database calls with business logic
+- Components that fetch data, manage state, and render — all in one file
+- Three different error handling styles across the same project
+- Test files that follow no consistent pattern
+
+The code compiles. The tests pass. But **every file looks like it was written by a different person** — because it was. A different conversation, a different prompt, a different day.
+
+Six months in, you're not building anymore. You're untangling.
+
+**The root cause?** Your architecture rules, naming conventions, and patterns aren't written down anywhere your agent can see them. They're in your head, in old PR comments, in Slack threads nobody reads.
+
+And if you *do* write rules — now you're maintaining them in 3 places:
+
+- `.claude/rules/` for Claude Code
+- `.cursor/rules/` for Cursor
+- `.github/instructions/` for Copilot
+
+Different formats. Different folders. Same content copied over and over.
+
+### The fix
+
+**Codeplaybook generates your standards once in `.codeplaybook/` and deploys them to every agent you use.**
+
+- **Prescribe** architecture upfront — pick hexagonal, clean architecture, or feature slices and get standards generated from curated blueprints. Your agent follows the rules from day one.
+- **Discover** patterns from existing code — scan your codebase for conventions worth preserving and turn them into enforceable standards.
+- **Sync** everywhere — one source of truth, deployed to Claude Code, Cursor, and Copilot automatically.
+
+No cloud. No database. Just local markdown files you own and control.
 
 ## Install
 
@@ -89,14 +120,7 @@ Each blueprint includes framework-specific variants for NestJS, Spring Boot, Fas
 
 ## Contributing
 
-We welcome contributions! The easiest ways to contribute:
-
-- **Add a blueprint** — New architectural pattern (MVC, event-driven, microservices). Copy `blueprints/_template.md`.
-- **Add a framework variant** — Add Django support to the hexagonal blueprint, etc.
-- **Add an analysis** — New code analysis type (security patterns, accessibility). Copy `analyses/_template.md`.
-- **Add an agent adapter** — Support for Continue.dev, Windsurf, Codex, etc.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+New blueprints, analyses, framework variants, and agent adapters are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Supported Languages & Frameworks
 

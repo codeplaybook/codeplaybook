@@ -1,6 +1,6 @@
 {
   "name": "codeplaybook",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Agent-agnostic coding standards and commands for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.",
   "bin": {
     "codeplaybook": "./bin/cli.js"
@@ -16,11 +16,15 @@
     "clean-architecture",
     "developer-tools"
   ],
-  "author": "",
+  "author": "Ghanashyam Meher <gmeher360@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/codeplaybook/codeplaybook.git"
+  },
+  "homepage": "https://github.com/codeplaybook/codeplaybook",
+  "bugs": {
+    "url": "https://github.com/codeplaybook/codeplaybook/issues"
   },
   "files": [
     "bin/",

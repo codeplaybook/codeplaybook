@@ -90,6 +90,22 @@ mkdir -p /tmp/test/.cursor && cd /tmp/test && node /path/to/codeplaybook/bin/cli
 mkdir -p /tmp/test/.github/instructions && cd /tmp/test && node /path/to/codeplaybook/bin/cli.js init
 ```
 
+## Running CI Checks Locally
+
+Run the same checks CI runs on pull requests:
+
+```bash
+# Basic CLI test
+npm test
+
+# Test all three adapters
+mkdir -p /tmp/test-claude/.claude && cd /tmp/test-claude && node /path/to/codeplaybook/bin/cli.js init
+mkdir -p /tmp/test-cursor/.cursor && cd /tmp/test-cursor && node /path/to/codeplaybook/bin/cli.js init
+mkdir -p /tmp/test-copilot/.github/instructions && cd /tmp/test-copilot && node /path/to/codeplaybook/bin/cli.js init
+```
+
+Replace `/path/to/codeplaybook` with the path to your local clone.
+
 ## Pull Request Guidelines
 
 - Keep PRs focused -- one blueprint, one analysis, or one agent per PR

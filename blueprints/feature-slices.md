@@ -13,6 +13,20 @@ Key principles:
 - **Shared kernel**: Cross-cutting concerns (auth, logging, base classes) live in a shared directory
 - **No cross-feature imports**: Features never import from each other — use events or the shared kernel
 
+## When to Use
+
+- Features evolve at different speeds and teams own specific features end-to-end
+- The codebase is large enough that layer-based organization creates navigation overhead
+- You want to add or remove features without touching unrelated code
+- The system is a candidate for future decomposition into microservices along feature boundaries
+
+## Start Simpler If
+
+- Your app has only 1-2 features — a flat structure works until you add more
+- Most logic is genuinely shared across features, making isolation artificial — consider hexagonal or clean architecture instead
+
+---
+
 ## Standards
 
 ### Standard: Feature Isolation

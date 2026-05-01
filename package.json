@@ -2,6 +2,7 @@
   "name": "codeplaybook",
   "version": "0.0.3",
   "description": "Agent-agnostic coding standards and commands for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.",
+  "type": "commonjs",
   "bin": {
     "codeplaybook": "./bin/cli.js"
   },
@@ -35,6 +36,9 @@
     "workflows/",
     "format/"
   ],
+  "scripts": {
+    "test": "node bin/cli.js --version && node bin/cli.js help"
+  },
   "engines": {
     "node": ">=18.0.0"
   }

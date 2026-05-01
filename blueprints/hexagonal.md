@@ -7,6 +7,20 @@ Three layers:
 - **Application**: Use cases that orchestrate domain logic, input/output DTOs
 - **Infrastructure**: Adapters for databases, APIs, messaging, HTTP controllers
 
+## When to Use
+
+- The system integrates with multiple external services (databases, APIs, message brokers) that may change over time
+- You need to test business logic in complete isolation from infrastructure
+- Infrastructure swappability is a real requirement (e.g., switching databases or replacing a third-party API)
+- The domain is complex enough to justify explicit port/adapter boundaries
+
+## Start Simpler If
+
+- Your app is purely CRUD with almost no business logic today — you can adopt hexagonal later as complexity grows
+- You're spiking or prototyping and plan to restructure before production
+
+---
+
 ## Standards
 
 ### Standard: Hexagonal Layer Boundaries

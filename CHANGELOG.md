@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improved README problem statement
 
+## [0.0.2] - 2026-05-01
+
+### Changed
+
+- Improved README with stronger problem statement
+- Set version to 0.0.1 for initial pre-release (published as 0.0.2)
+
 ## [0.0.1] - 2026-05-01
 
 ### Added

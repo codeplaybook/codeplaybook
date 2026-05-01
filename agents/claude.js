@@ -6,7 +6,9 @@ const path = require('path');
 const AGENT_VARS = {
   AGENT_RULES_DIR: '.claude/rules/',
   AGENT_COMMANDS_DIR: '.claude/commands/',
-  AGENT_CONFIG_FILE: 'CLAUDE.md'
+  AGENT_CONFIG_FILE: 'CLAUDE.md',
+  AGENT_ANALYSES_DIR: 'references',
+  AGENT_BLUEPRINTS_DIR: 'blueprints'
 };
 
 module.exports = {
@@ -83,5 +85,7 @@ function resolveVars(text) {
   return text
     .replace(/\$AGENT_RULES_DIR/g, AGENT_VARS.AGENT_RULES_DIR)
     .replace(/\$AGENT_COMMANDS_DIR/g, AGENT_VARS.AGENT_COMMANDS_DIR)
-    .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE);
+    .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE)
+    .replace(/\$AGENT_ANALYSES_DIR/g, AGENT_VARS.AGENT_ANALYSES_DIR)
+    .replace(/\$AGENT_BLUEPRINTS_DIR/g, AGENT_VARS.AGENT_BLUEPRINTS_DIR);
 }

@@ -8,6 +8,20 @@ Four layers (inside → outside):
 - **Interface Adapters**: Convert data between use case format and external format (controllers, presenters, gateways)
 - **Frameworks & Drivers**: External tools and delivery mechanisms (web framework, database, UI)
 
+## When to Use
+
+- The application has complex business rules that must remain framework-independent and testable in isolation
+- You need the core logic to survive framework migrations (e.g., switching from Express to Fastify, or Django to FastAPI)
+- Multiple delivery mechanisms serve the same use cases (REST API, GraphQL, CLI, message consumer)
+- Long-lived enterprise systems where protecting the domain from infrastructure churn is critical
+
+## Start Simpler If
+
+- Your app is a thin API that mostly proxies data with little business logic — a two-layer structure may be enough initially
+- The application is dominated by infrastructure concerns (ETL pipelines, data importers) where the domain layer would be nearly empty
+
+---
+
 ## Standards
 
 ### Standard: Clean Architecture Dependency Rule

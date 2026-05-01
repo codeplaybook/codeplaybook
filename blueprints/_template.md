@@ -7,9 +7,9 @@
 - {Scenario where this pattern is the right choice}
 - {Another scenario}
 
-## When NOT to Use
+## Start Simpler If
 
-- {Scenario where this pattern adds unnecessary complexity}
+- {Scenario where a lighter approach works and this pattern can be adopted later}
 
 ---
 

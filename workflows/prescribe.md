@@ -95,7 +95,7 @@ Remember the result as `$FRAMEWORK`.
 
 ## Step 3 — Present Blueprints
 
-Read all blueprint files from the `blueprints/` directory (relative to this workflow file). Present them to the user.
+Read all blueprint files from the `$AGENT_BLUEPRINTS_DIR` directory (relative to this workflow file). Present them to the user.
 
 Print:
 

@@ -241,12 +241,12 @@ Pass the detected stack from Step 4 (languages, frameworks, architecture markers
 
 | # | Analysis | Reference File |
 |---|----------|----------------|
-| 1 | Code Scaffolding | [`analyses/code-scaffolding.md`](analyses/code-scaffolding.md) |
-| 2 | Architecture Boundaries | [`analyses/architecture-boundaries.md`](analyses/architecture-boundaries.md) |
-| 3 | Testing Practices | [`analyses/testing-practices.md`](analyses/testing-practices.md) |
-| 4 | Development Workflow | [`analyses/dev-workflow.md`](analyses/dev-workflow.md) |
-| 5 | Error Handling | [`analyses/error-handling.md`](analyses/error-handling.md) |
-| 6 | Import & Module Patterns | [`analyses/import-patterns.md`](analyses/import-patterns.md) |
+| 1 | Code Scaffolding | [`$AGENT_ANALYSES_DIR/code-scaffolding.md`]($AGENT_ANALYSES_DIR/code-scaffolding.md) |
+| 2 | Architecture Boundaries | [`$AGENT_ANALYSES_DIR/architecture-boundaries.md`]($AGENT_ANALYSES_DIR/architecture-boundaries.md) |
+| 3 | Testing Practices | [`$AGENT_ANALYSES_DIR/testing-practices.md`]($AGENT_ANALYSES_DIR/testing-practices.md) |
+| 4 | Development Workflow | [`$AGENT_ANALYSES_DIR/dev-workflow.md`]($AGENT_ANALYSES_DIR/dev-workflow.md) |
+| 5 | Error Handling | [`$AGENT_ANALYSES_DIR/error-handling.md`]($AGENT_ANALYSES_DIR/error-handling.md) |
+| 6 | Import & Module Patterns | [`$AGENT_ANALYSES_DIR/import-patterns.md`]($AGENT_ANALYSES_DIR/import-patterns.md) |
 
 Skip any analysis the user did not select.
 

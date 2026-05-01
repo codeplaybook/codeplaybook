@@ -6,7 +6,9 @@ const path = require('path');
 const AGENT_VARS = {
   AGENT_RULES_DIR: '.cursor/rules/',
   AGENT_COMMANDS_DIR: '.cursor/commands/',
-  AGENT_CONFIG_FILE: '.cursorrules'
+  AGENT_CONFIG_FILE: '.cursorrules',
+  AGENT_ANALYSES_DIR: 'codeplaybook-references',
+  AGENT_BLUEPRINTS_DIR: 'codeplaybook-blueprints'
 };
 
 module.exports = {
@@ -88,5 +90,7 @@ function resolveVars(text) {
   return text
     .replace(/\$AGENT_RULES_DIR/g, AGENT_VARS.AGENT_RULES_DIR)
     .replace(/\$AGENT_COMMANDS_DIR/g, AGENT_VARS.AGENT_COMMANDS_DIR)
-    .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE);
+    .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE)
+    .replace(/\$AGENT_ANALYSES_DIR/g, AGENT_VARS.AGENT_ANALYSES_DIR)
+    .replace(/\$AGENT_BLUEPRINTS_DIR/g, AGENT_VARS.AGENT_BLUEPRINTS_DIR);
 }

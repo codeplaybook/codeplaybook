@@ -14,6 +14,20 @@ Key principles:
 - **Shared components are dumb.** They accept props, emit events, render UI. Zero business logic, zero data fetching.
 - **Pages are thin.** They compose feature components and connect routes — they don't contain logic.
 
+## When to Use
+
+- The frontend has multiple features with distinct data and state requirements
+- Shared UI components are being reused across features and must stay free of business logic
+- The codebase has grown past the point where ad-hoc component organization leads to god components and scattered API calls
+- Teams need clear boundaries between presentational UI, data fetching, and state management
+
+## Start Simpler If
+
+- Your frontend is a static landing page or simple form with no data fetching — this architecture adds overhead you don't need yet
+- You have a single feature — the layered structure becomes valuable as you add more features
+
+---
+
 ## Standards
 
 ### Standard: Component Layers

@@ -30,7 +30,7 @@ Different formats. Different folders. Same content copied over and over.
 **Codeplaybook generates your standards once in `.codeplaybook/` and deploys them to every agent you use.**
 
 - **Prescribe** architecture upfront — pick hexagonal, clean architecture, or feature slices and get standards generated from curated blueprints. Your agent follows the rules from day one.
-- **Discover** patterns from existing code — scan your codebase for conventions worth preserving and turn them into enforceable standards.
+- **Onboard** your existing codebase — scan for recurring patterns and turn them into enforceable standards.
 - **Sync** everywhere — one source of truth, deployed to Claude Code, Cursor, and Copilot automatically.
 
 No cloud. No database. Just local markdown files you own and control.
@@ -73,9 +73,9 @@ npx codeplaybook init
 
 **Prescribe** — Declare your architectural intent upfront. Pick a blueprint, get standards and commands generated from curated patterns. Best for new projects or adopting a new architecture.
 
-**Discover** — Scan your codebase for recurring patterns and generate standards from what already exists. Best for established projects with conventions worth preserving.
+**Onboard** — Scan your codebase for recurring patterns and discover conventions worth preserving. Generates standards from what already exists. Best for established projects.
 
-Both output to `.codeplaybook/` (agent-agnostic). Use them together: prescribe first, then discover finds additional patterns on top.
+Both output to `.codeplaybook/` (agent-agnostic). Use them together: prescribe first, then onboard finds additional patterns on top.
 
 ## What Gets Generated
 

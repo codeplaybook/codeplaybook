@@ -72,6 +72,21 @@ async function runInit() {
   console.log(`    ${Object.keys(content.workflows).length} workflows`);
   console.log();
 
+  // Check for existing codeplaybook installations
+  const existingPaths = [
+    '.claude/skills/codeplaybook-onboard',
+    '.cursor/rules/codeplaybook-onboard.md',
+    '.github/instructions/codeplaybook-onboard.md'
+  ];
+  const hasExisting = existingPaths.some(p => {
+    const fs = require('fs');
+    return fs.existsSync(path.join(projectPath, p));
+  });
+  if (hasExisting) {
+    console.log('  Note: Existing codeplaybook installation detected. Files will be updated.');
+    console.log();
+  }
+
   // Step 3: Install for each agent
   let totalFiles = 0;
 
@@ -97,7 +112,7 @@ async function runInit() {
 function loadAdapters() {
   const fs = require('fs');
   const adapterFiles = fs.readdirSync(AGENTS_DIR)
-    .filter(f => f.endsWith('.js'));
+    .filter(f => f.endsWith('.js') && !f.startsWith('_'));
 
   return adapterFiles.map(f => require(path.join(AGENTS_DIR, f)));
 }

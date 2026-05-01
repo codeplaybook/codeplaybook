@@ -6,7 +6,9 @@ const path = require('path');
 const AGENT_VARS = {
   AGENT_RULES_DIR: '.github/instructions/',
   AGENT_COMMANDS_DIR: '.github/prompts/',
-  AGENT_CONFIG_FILE: '.github/copilot-instructions.md'
+  AGENT_CONFIG_FILE: '.github/copilot-instructions.md',
+  AGENT_ANALYSES_DIR: 'codeplaybook-references',
+  AGENT_BLUEPRINTS_DIR: 'codeplaybook-blueprints'
 };
 
 module.exports = {
@@ -109,6 +111,7 @@ module.exports = {
 function wrapInstruction({ description, body }) {
   return `---
 applyTo: '**'
+description: '${description}'
 ---
 
 ${body}`;
@@ -118,5 +121,7 @@ function resolveVars(text) {
   return text
     .replace(/\$AGENT_RULES_DIR/g, AGENT_VARS.AGENT_RULES_DIR)
     .replace(/\$AGENT_COMMANDS_DIR/g, AGENT_VARS.AGENT_COMMANDS_DIR)
-    .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE);
+    .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE)
+    .replace(/\$AGENT_ANALYSES_DIR/g, AGENT_VARS.AGENT_ANALYSES_DIR)
+    .replace(/\$AGENT_BLUEPRINTS_DIR/g, AGENT_VARS.AGENT_BLUEPRINTS_DIR);
 }

@@ -1,0 +1,26 @@
+name: New Analysis
+description: Propose a new codebase analysis type
+labels: ["analysis", "enhancement"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Analysis Name
+      description: What does this analysis detect?
+      placeholder: e.g., Security Patterns, Accessibility, Performance
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What patterns does it look for and why do they matter?
+    validations:
+      required: true
+  - type: textarea
+    id: detection
+    attributes:
+      label: Detection Approach
+      description: How would you detect these patterns? What files/markers to look for?
+    validations:
+      required: true

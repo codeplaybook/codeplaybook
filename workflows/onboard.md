@@ -1,14 +1,30 @@
----
-name: 'codeplaybook-onboard'
-description: 'Analyze codebase and generate coding standards & commands locally. Two-stage: creates agent-agnostic standards in .codeplaybook/, then deploys as .claude/rules/ and .claude/commands/.'
----
+# Onboard Workflow
 
-# codeplaybook-onboard
+Analyze a codebase for recurring patterns and generate coding standards and commands locally.
 
-Action skill. Provides **local automated onboarding**:
-1. Analyzes codebase for recurring patterns
+## Overview
+
+This workflow provides **local automated onboarding** for any codebase:
+1. Analyzes the codebase for recurring patterns (read-only)
 2. Generates agent-agnostic **standards** and **commands** in `.codeplaybook/`
-3. Deploys them as `.claude/rules/` and `.claude/commands/` files
+3. Deploys them into the active agent's rules and commands directories
+
+### Inputs
+
+| Variable | Description | Provided by |
+|----------|-------------|-------------|
+| `$AGENT_RULES_DIR` | Path where the agent stores rule files (e.g., `.claude/rules/`) | Agent adapter |
+| `$AGENT_COMMANDS_DIR` | Path where the agent stores command files (e.g., `.claude/commands/`) | Agent adapter |
+| `$AGENT_CONFIG_FILE` | Path to the agent's top-level configuration file (e.g., `CLAUDE.md`) | Agent adapter |
+| Agent frontmatter format | The YAML frontmatter schema the agent uses for rule/command files | Agent adapter |
+
+### Outputs
+
+- Agent-agnostic standards in `.codeplaybook/standards/`
+- Agent-agnostic commands in `.codeplaybook/commands/`
+- Deployed rule files in `$AGENT_RULES_DIR`
+- Deployed command files in `$AGENT_COMMANDS_DIR`
+- Updated `$AGENT_CONFIG_FILE` with a Codeplaybook section
 
 ## Guarantees
 
@@ -25,7 +41,7 @@ Action skill. Provides **local automated onboarding**:
 - **Evidence:** `path[:line-line]` entries; omit line ranges only when the file isn't text-searchable.
 - **Standard:** an agent-agnostic coding guideline with rules. Lives in `.codeplaybook/standards/`.
 - **Command:** an agent-agnostic multi-step workflow. Lives in `.codeplaybook/commands/`.
-- **Rule:** a Claude Code rule file derived from a standard. Lives in `.claude/rules/`.
+- **Rule:** an agent-specific rule file derived from a standard. Lives in `$AGENT_RULES_DIR`.
 
 ---
 
@@ -50,10 +66,10 @@ basename "$(git rev-parse --show-toplevel)"
 If this fails, the project is not a git repository. Print:
 
 ```
-This project is not a git repository. Please run `git init` first, then re-run this skill.
+This project is not a git repository. Please run `git init` first, then re-run this workflow.
 ```
 
-Exit the skill.
+Exit the workflow.
 
 Remember the result as `$REPO_NAME`.
 
@@ -67,7 +83,7 @@ Print exactly:
 codeplaybook-onboard — analyzing codebase (read-only)
 Repository: $REPO_NAME
 Output: .codeplaybook/standards/ and .codeplaybook/commands/
-Deploy target: .claude/rules/ and .claude/commands/
+Deploy target: $AGENT_RULES_DIR and $AGENT_COMMANDS_DIR
 ```
 
 ---
@@ -79,7 +95,8 @@ Before analyzing, detect and preserve any existing configuration.
 ### Glob (broad, future-proof)
 Glob for markdown in these roots (recursive):
 - `.codeplaybook/**/*.md`
-- `.claude/**/*.md`
+- `$AGENT_RULES_DIR/**/*.md`
+- `$AGENT_COMMANDS_DIR/**/*.md`
 - `.agents/**/*.md`
 - `**/skills/**/*.md`
 - `**/rules/**/*.md`
@@ -88,9 +105,9 @@ Glob for markdown in these roots (recursive):
 Classify found files into counts:
 - **standards**: `.codeplaybook/standards/**/*.md` (excluding `_drafts`)
 - **commands**: `.codeplaybook/commands/**/*.md` (excluding `_drafts`)
-- **rules**: `.claude/rules/**/*.md`
-- **claude_commands**: `.claude/commands/**/*.md`
-- **other_docs**: any markdown under `.claude/skills/`, `.agents/`, or other agent directories
+- **rules**: `$AGENT_RULES_DIR/**/*.md`
+- **agent_commands**: `$AGENT_COMMANDS_DIR/**/*.md`
+- **other_docs**: any markdown under agent-specific skill directories, `.agents/`, or other agent directories
 
 If any exist, print exactly:
 
@@ -99,8 +116,8 @@ Existing configuration detected:
 
     Standards (.codeplaybook/): [N]
     Commands (.codeplaybook/): [M]
-    Rules (.claude/): [P]
-    Claude Commands (.claude/): [Q]
+    Rules ($AGENT_RULES_DIR): [P]
+    Agent Commands ($AGENT_COMMANDS_DIR): [Q]
     Other docs: [R]
 ```
 
@@ -224,12 +241,12 @@ Pass the detected stack from Step 4 (languages, frameworks, architecture markers
 
 | # | Analysis | Reference File |
 |---|----------|----------------|
-| 1 | Code Scaffolding | [`references/code-scaffolding.md`](references/code-scaffolding.md) |
-| 2 | Architecture Boundaries | [`references/architecture-boundaries.md`](references/architecture-boundaries.md) |
-| 3 | Testing Practices | [`references/testing-practices.md`](references/testing-practices.md) |
-| 4 | Development Workflow | [`references/dev-workflow.md`](references/dev-workflow.md) |
-| 5 | Error Handling | [`references/error-handling.md`](references/error-handling.md) |
-| 6 | Import & Module Patterns | [`references/import-patterns.md`](references/import-patterns.md) |
+| 1 | Code Scaffolding | [`analyses/code-scaffolding.md`](analyses/code-scaffolding.md) |
+| 2 | Architecture Boundaries | [`analyses/architecture-boundaries.md`](analyses/architecture-boundaries.md) |
+| 3 | Testing Practices | [`analyses/testing-practices.md`](analyses/testing-practices.md) |
+| 4 | Development Workflow | [`analyses/dev-workflow.md`](analyses/dev-workflow.md) |
+| 5 | Error Handling | [`analyses/error-handling.md`](analyses/error-handling.md) |
+| 6 | Import & Module Patterns | [`analyses/import-patterns.md`](analyses/import-patterns.md) |
 
 Skip any analysis the user did not select.
 
@@ -255,7 +272,7 @@ Generate all draft files in one batch. These are **agent-agnostic** — they des
 
 ### Skip already-prescribed standards
 
-Before generating a standard draft, check if `.codeplaybook/standards/` already has a standard covering the same topic (by reading existing standard names and scopes). If a prescribed standard already exists for a concern (e.g., architecture boundaries, layer structure), **skip generating** a discovered standard for that same concern. This prevents `/codeplaybook-onboard` from conflicting with standards created by `/codeplaybook-prescribe`.
+Before generating a standard draft, check if `.codeplaybook/standards/` already has a standard covering the same topic (by reading existing standard names and scopes). If a prescribed standard already exists for a concern (e.g., architecture boundaries, layer structure), **skip generating** a discovered standard for that same concern. This prevents the onboard workflow from conflicting with standards created by a prescribe workflow.
 
 ### Standard Draft Format
 
@@ -348,8 +365,8 @@ or edit them before deploying.
 
 Then ask via AskUserQuestion with three options:
 
-- **Deploy all now** — Save standards/commands to `.codeplaybook/` and deploy rules to `.claude/`
-- **Let me review drafts first** — Pause to allow editing, re-run skill when ready
+- **Deploy all now** — Save standards/commands to `.codeplaybook/` and deploy rules to the agent
+- **Let me review drafts first** — Pause to allow editing, re-run workflow when ready
 - **Cancel** — Exit without deploying anything
 
 ### If "Let me review drafts first"
@@ -360,10 +377,10 @@ Draft files ready for review at:
   - .codeplaybook/_drafts/standards/
   - .codeplaybook/_drafts/commands/
 
-Edit them as needed, then re-run this skill to continue.
+Edit them as needed, then re-run this workflow to continue.
 ```
 
-Exit the skill.
+Exit the workflow.
 
 ### If "Cancel"
 
@@ -373,7 +390,7 @@ Onboarding cancelled.
 Draft files remain at .codeplaybook/_drafts/ if you want to review them later.
 ```
 
-Exit the skill.
+Exit the workflow.
 
 ---
 
@@ -405,17 +422,17 @@ Move drafts from `.codeplaybook/_drafts/` to their permanent agent-agnostic loca
    rm -rf .codeplaybook/_drafts
    ```
 
-### Stage 2: Deploy to Claude Code
+### Stage 2: Deploy to agent
 
-Convert agent-agnostic files into Claude-specific format.
+Convert agent-agnostic files into the agent's specific format.
 
 #### Standards -> Rules
 
-For each `.codeplaybook/standards/{slug}.md`, create `.claude/rules/codeplaybook-{slug}.md`:
+For each `.codeplaybook/standards/{slug}.md`, create a rule file at `$AGENT_RULES_DIR/codeplaybook-{slug}.md`:
 
 1. Create directory:
    ```bash
-   mkdir -p .claude/rules
+   mkdir -p $AGENT_RULES_DIR
    ```
 
 2. Read the standard file. Extract:
@@ -427,64 +444,46 @@ For each `.codeplaybook/standards/{slug}.md`, create `.claude/rules/codeplaybook
      - "Python files in src/" -> `src/**/*.py`
      - If scope is too broad or unclear, omit globs entirely
 
-3. Write the Claude rule file with this format:
-
-```markdown
----
-description: '{description extracted from first paragraph}'
-globs: '{glob pattern derived from Scope}'
----
-
-# {Standard Name}
-
-{Description paragraph}
-
-## Rules
-
-* {Rule 1}
-* {Rule 2}
-```
+3. Write the rule file using the agent's frontmatter format (provided by the agent adapter). The file must contain:
+   - The agent-specific frontmatter with the extracted `description` and `globs`
+   - The standard name as a heading
+   - The description paragraph
+   - The rules list
 
 If the standard has no meaningful scope restriction, omit the `globs` field from the frontmatter.
 
-#### Commands -> Claude Commands
+#### Commands -> Agent Commands
 
-For each `.codeplaybook/commands/{slug}.md`, create `.claude/commands/{slug}.md`:
+For each `.codeplaybook/commands/{slug}.md`, create a command file at `$AGENT_COMMANDS_DIR/{slug}.md`:
 
 1. Create directory:
    ```bash
-   mkdir -p .claude/commands
+   mkdir -p $AGENT_COMMANDS_DIR
    ```
 
 2. Read the command file. Extract:
    - **description**: Use the first paragraph (under `# {Name}`) as the description
 
-3. Write the Claude command file with this format:
-
-```markdown
----
-description: '{description extracted from first paragraph}'
----
-
-{Rest of the command content: When to Use, Context Validation Checkpoints, Steps sections}
-```
+3. Write the agent command file using the agent's frontmatter format (provided by the agent adapter). The file must contain:
+   - The agent-specific frontmatter with the extracted `description`
+   - The rest of the command content: When to Use, Context Validation Checkpoints, Steps sections
 
 #### Collision handling
 
-If `.claude/rules/codeplaybook-{slug}.md` or `.claude/commands/{slug}.md` already exists, append `-2`, `-3`, etc. to the filename until a free name is found.
+If `$AGENT_RULES_DIR/codeplaybook-{slug}.md` or `$AGENT_COMMANDS_DIR/{slug}.md` already exists, append `-2`, `-3`, etc. to the filename until a free name is found.
 
 ---
 
-## Step 9 — Update CLAUDE.md
+## Step 9 — Update Agent Configuration
 
-After deploying, ensure the generated rules and commands are surfaced in `CLAUDE.md` so the AI agent always sees them. CLAUDE.md is loaded into every conversation and is the highest-priority context.
+After deploying, ensure the generated rules and commands are surfaced in the agent's configuration file (`$AGENT_CONFIG_FILE`) so the agent always sees them. This file is loaded into every conversation and is the highest-priority context.
 
 ### Logic
 
-1. If `CLAUDE.md` exists, read it and check if a `## Codeplaybook` section already exists
+1. If `$AGENT_CONFIG_FILE` exists, read it and check if a `## Codeplaybook` section already exists
 2. If the section exists, **replace it entirely** with the updated content below
 3. If the section doesn't exist, **append** the content below at the end of the file
-4. If `CLAUDE.md` doesn't exist at all, **create it** with just this section
+4. If `$AGENT_CONFIG_FILE` doesn't exist at all, **create it** with just this section
 
 ### Content to write
 
@@ -495,7 +494,7 @@ Generate the following section, filling in the actual standards and commands tha
 
 ### Coding Standards
 
-Always review `.claude/rules/` before implementing any feature or fix.
+Always review the rules in `$AGENT_RULES_DIR` before implementing any feature or fix.
 
 {for each deployed standard, one line:}
 - **{Standard Name}**: {first sentence of the standard's description}
@@ -532,21 +531,21 @@ Standards:
 Commands:
   - [Name] -> .codeplaybook/commands/[slug].md
 
-Claude Code files (deployed):
+Agent-deployed files:
 
 Rules:
-  - [Name] -> .claude/rules/codeplaybook-[slug].md
+  - [Name] -> $AGENT_RULES_DIR/codeplaybook-[slug].md
 
 Commands:
-  - [Name] -> .claude/commands/[slug].md
+  - [Name] -> $AGENT_COMMANDS_DIR/[slug].md
 
-CLAUDE.md updated with Codeplaybook section.
+$AGENT_CONFIG_FILE updated with Codeplaybook section.
 
 Next steps:
   - Your AI coding assistant will automatically pick up the new rules
-  - Commands are available via /{slug} in Claude Code
+  - Commands are available via the agent's command interface
   - Edit .codeplaybook/standards/ or .codeplaybook/commands/ to update the source
-  - Re-run this skill to re-deploy changes to .claude/
+  - Re-run this workflow to re-deploy changes to the agent
 ============================================================
 ```
 
@@ -612,4 +611,4 @@ If directory creation or file writing fails:
 Failed to write files. Please check directory permissions and try again.
 ```
 
-Exit the skill.
+Exit the workflow.

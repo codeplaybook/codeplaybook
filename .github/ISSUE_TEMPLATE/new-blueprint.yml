@@ -1,0 +1,40 @@
+name: New Blueprint
+description: Propose a new architectural blueprint
+labels: ["blueprint", "enhancement"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Blueprint Name
+      description: What architectural pattern is this?
+      placeholder: e.g., MVC, Event-Driven, Microservices
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What problem does this pattern solve? When should it be used?
+    validations:
+      required: true
+  - type: textarea
+    id: frameworks
+    attributes:
+      label: Framework Variants
+      description: Which frameworks will you include variants for?
+      placeholder: |
+        - NestJS
+        - Express
+        - FastAPI
+    validations:
+      required: true
+  - type: textarea
+    id: standards
+    attributes:
+      label: Proposed Standards
+      description: What coding standards would this blueprint generate?
+      placeholder: |
+        - Layer separation rules
+        - Naming conventions
+    validations:
+      required: false

@@ -1,0 +1,26 @@
+name: New Agent Adapter
+description: Propose support for a new coding agent
+labels: ["agent-adapter", "enhancement"]
+body:
+  - type: input
+    id: agent
+    attributes:
+      label: Agent Name
+      description: Which coding agent?
+      placeholder: e.g., Continue.dev, Windsurf, Codex
+    validations:
+      required: true
+  - type: textarea
+    id: format
+    attributes:
+      label: Agent Format
+      description: How does this agent consume rules/instructions? What directory structure and frontmatter does it use?
+    validations:
+      required: true
+  - type: textarea
+    id: detection
+    attributes:
+      label: Detection
+      description: How can we detect this agent in a project? What directories/files indicate it's installed?
+    validations:
+      required: true

@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: CLI version
+        run: node bin/cli.js --version
+
+      - name: CLI help
+        run: node bin/cli.js help
+
+      - name: Test Claude Code adapter
+        run: |
+          mkdir -p /tmp/test-claude/.claude
+          cd /tmp/test-claude
+          node $GITHUB_WORKSPACE/bin/cli.js init
+          test -f .claude/skills/codeplaybook-onboard/SKILL.md
+          test -f .claude/skills/codeplaybook-prescribe/SKILL.md
+          test -f .claude/skills/codeplaybook-sync/SKILL.md
+          echo "Claude adapter: OK"
+
+      - name: Test Cursor adapter
+        run: |
+          mkdir -p /tmp/test-cursor/.cursor
+          cd /tmp/test-cursor
+          node $GITHUB_WORKSPACE/bin/cli.js init
+          test -f .cursor/rules/codeplaybook-onboard.md
+          test -f .cursor/rules/codeplaybook-prescribe.md
+          test -f .cursor/rules/codeplaybook-sync.md
+          echo "Cursor adapter: OK"
+
+      - name: Test Copilot adapter
+        run: |
+          mkdir -p /tmp/test-copilot/.github/instructions
+          cd /tmp/test-copilot
+          node $GITHUB_WORKSPACE/bin/cli.js init
+          test -f .github/instructions/codeplaybook-onboard.md
+          test -f .github/instructions/codeplaybook-prescribe.md
+          test -f .github/instructions/codeplaybook-sync.md
+          test -f .github/prompts/codeplaybook-onboard.prompt.md
+          echo "Copilot adapter: OK"
+
+      - name: Verify content completeness
+        run: |
+          # Check all blueprints exist
+          test -f blueprints/hexagonal.md
+          test -f blueprints/clean-architecture.md
+          test -f blueprints/feature-slices.md
+          test -f blueprints/frontend-component-architecture.md
+          echo "Blueprints: 4 files OK"
+
+          # Check all analyses exist
+          test -f analyses/code-scaffolding.md
+          test -f analyses/architecture-boundaries.md
+          test -f analyses/testing-practices.md
+          test -f analyses/dev-workflow.md
+          test -f analyses/error-handling.md
+          test -f analyses/import-patterns.md
+          echo "Analyses: 6 files OK"
+
+          # Check all workflows exist
+          test -f workflows/onboard.md
+          test -f workflows/prescribe.md
+          test -f workflows/sync.md
+          echo "Workflows: 3 files OK"

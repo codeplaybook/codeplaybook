@@ -1,0 +1,37 @@
+{
+  "name": "codeplaybook",
+  "version": "1.0.0",
+  "description": "Agent-agnostic coding standards and commands for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.",
+  "bin": {
+    "codeplaybook": "./bin/cli.js"
+  },
+  "keywords": [
+    "coding-standards",
+    "architecture",
+    "claude-code",
+    "cursor",
+    "copilot",
+    "ai-coding",
+    "hexagonal",
+    "clean-architecture",
+    "developer-tools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "agents/",
+    "blueprints/",
+    "analyses/",
+    "workflows/",
+    "format/"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

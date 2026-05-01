@@ -1,105 +1,111 @@
 # Codeplaybook
 
-Generate coding standards and commands for your codebase as local files. Discover patterns from existing code or prescribe architecture upfront. Works with Claude Code — no cloud services, no packages, no databases.
+Agent-agnostic coding standards for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.
 
-## How it works
+Discover patterns from existing code or prescribe architecture upfront. Standards live in `.codeplaybook/` as plain markdown -- portable, editable, and not locked into any single tool.
 
-**Two modes:**
+## Install
 
-1. **Prescribe** (`/codeplaybook-prescribe`) — Declare your architectural intent (hexagonal, clean architecture, feature slices) and generate standards + commands from curated blueprints. Best for greenfield projects or adopting a new pattern.
+```bash
+npx codeplaybook init
+```
 
-2. **Discover** (`/codeplaybook-onboard`) — Scan your codebase for recurring patterns and generate standards + commands from what already exists. Best for existing projects with established conventions.
+The CLI detects which coding agents you use and installs the right skills automatically.
 
-Both output to the same format. Use them together: prescribe first, then onboard discovers additional patterns on top.
+**Supported agents:** Claude Code, Cursor, GitHub Copilot
+
+**Alternative install (from GitHub):**
+```bash
+npx github:codeplaybook/codeplaybook init
+```
+
+## How It Works
+
+```
+npx codeplaybook init
+  → detects your agent (Claude Code, Cursor, Copilot)
+  → installs skills for that agent
+
+/codeplaybook-prescribe
+  → pick an architecture (hexagonal, clean, feature slices)
+  → generates standards + commands in .codeplaybook/
+
+/codeplaybook-onboard
+  → analyzes your codebase for recurring patterns
+  → generates standards + commands in .codeplaybook/
+
+/codeplaybook-sync
+  → re-deploys .codeplaybook/ to your agent's format
+```
+
+### Two Modes
+
+**Prescribe** — Declare your architectural intent upfront. Pick a blueprint, get standards and commands generated from curated patterns. Best for new projects or adopting a new architecture.
+
+**Discover** — Scan your codebase for recurring patterns and generate standards from what already exists. Best for established projects with conventions worth preserving.
+
+Both output to `.codeplaybook/` (agent-agnostic). Use them together: prescribe first, then discover finds additional patterns on top.
+
+## What Gets Generated
+
+```
+your-project/
+├── .codeplaybook/                    ← agent-agnostic source of truth
+│   ├── standards/
+│   │   ├── codeplaybook-hexagonal-layers.md
+│   │   └── codeplaybook-test-conventions.md
+│   └── commands/
+│       ├── codeplaybook-create-usecase.md
+│       └── codeplaybook-pre-pr-check.md
+│
+├── .claude/rules/codeplaybook-*.md   ← Claude Code deployment
+├── .cursor/rules/codeplaybook-*.md   ← Cursor deployment
+└── .github/instructions/codeplaybook-*.md  ← Copilot deployment
+```
+
+Edit files in `.codeplaybook/`, then run `/codeplaybook-sync` to re-deploy to your agent.
 
 ## Architectural Blueprints
 
-| Blueprint | What it prescribes |
+| Blueprint | What It Prescribes |
 |-----------|-------------------|
-| Hexagonal (Ports & Adapters) | Domain/Application/Infrastructure layers, port interfaces, adapter implementations |
-| Clean Architecture | Entities/Use Cases/Adapters/Frameworks with strict dependency rule |
-| Feature Slices | Feature-based directories, shared kernel, feature isolation |
-| Frontend Component Architecture | Component layers, data layer, state management, shared UI |
+| **Hexagonal** (Ports & Adapters) | Domain/Application/Infrastructure layers, port interfaces, adapter implementations |
+| **Clean Architecture** | Entities/Use Cases/Adapters/Frameworks with strict dependency rule |
+| **Feature Slices** | Feature-based directories, shared kernel, feature isolation |
+| **Frontend Component Architecture** | Component layers, data layer, state management, shared UI |
 
 Each blueprint includes framework-specific variants for NestJS, Spring Boot, FastAPI, Express, Go, Next.js, React, Vue, Angular, and Svelte.
 
-## Pattern Discovery
+## Codebase Analyses
 
-| Analysis | What it finds |
-|----------|---------------|
-| Code Scaffolding | Repeating file structures (controllers, services, components) |
-| Architecture Boundaries | Files with mixed responsibilities |
-| Testing Practices | Test coverage gaps, data construction patterns |
-| Development Workflow | CI steps that can't run locally |
-| Error Handling | Inconsistent error propagation, swallowed errors |
-| Import Patterns | Import ordering, barrel files, path aliases |
+| Analysis | What It Discovers |
+|----------|-------------------|
+| **Code Scaffolding** | Repeating file structures (controllers, services, components) |
+| **Architecture Boundaries** | Files with mixed responsibilities |
+| **Testing Practices** | Test coverage gaps, data construction patterns |
+| **Development Workflow** | CI steps that can't run locally |
+| **Error Handling** | Inconsistent error propagation, swallowed errors |
+| **Import Patterns** | Import ordering, barrel files, path aliases |
 
-## Installation
+## Contributing
 
-Copy the skills into your project's `.claude/skills/` directory:
+We welcome contributions! The easiest ways to contribute:
 
-```bash
-mkdir -p <your-repo>/.claude/skills
-cp -r skills/codeplaybook-prescribe <your-repo>/.claude/skills/
-cp -r skills/codeplaybook-onboard <your-repo>/.claude/skills/
-cp -r skills/codeplaybook-sync <your-repo>/.claude/skills/
-```
+- **Add a blueprint** — New architectural pattern (MVC, event-driven, microservices). Copy `blueprints/_template.md`.
+- **Add a framework variant** — Add Django support to the hexagonal blueprint, etc.
+- **Add an analysis** — New code analysis type (security patterns, accessibility). Copy `analyses/_template.md`.
+- **Add an agent adapter** — Support for Continue.dev, Windsurf, Codex, etc.
 
-## Usage
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-```
-/codeplaybook-prescribe  # Declare architecture → generate standards from blueprints
-/codeplaybook-onboard    # Analyze codebase → discover patterns → generate standards
-/codeplaybook-sync       # Re-deploy after editing .codeplaybook/ source files
-```
+## Supported Languages & Frameworks
 
-**Typical workflow:**
-```
-/codeplaybook-prescribe  → Pick "Hexagonal" for NestJS
-/codeplaybook-onboard    → Discovers test conventions, CI gaps, etc.
-/codeplaybook-sync       → Re-deploy after manual edits
-```
+**Backend:** TypeScript/NestJS, Python/Django/FastAPI, Go, Java/Spring, Ruby/Rails, Rust, PHP, .NET
 
-## What gets generated
+**Frontend:** React, Next.js, Vue/Nuxt, Angular, Svelte/SvelteKit, SolidJS
 
-```
-your-repo/
-  .codeplaybook/                    # Agent-agnostic source of truth
-    standards/
-      codeplaybook-hexagonal-layers.md        (prescribed)
-      codeplaybook-test-conventions.md        (discovered)
-      ...
-    commands/
-      codeplaybook-create-usecase.md          (prescribed)
-      codeplaybook-pre-pr-check.md            (discovered)
-      ...
-  .claude/                          # Claude Code deployment
-    rules/
-      codeplaybook-hexagonal-layers.md
-      codeplaybook-test-conventions.md
-      ...
-    commands/
-      codeplaybook-create-usecase.md
-      codeplaybook-pre-pr-check.md
-      ...
-  CLAUDE.md                         # Updated with standards + commands index
-```
-
-## Editing standards
-
-1. Edit files in `.codeplaybook/standards/` or `.codeplaybook/commands/`
-2. Run `/codeplaybook-sync` to re-deploy to `.claude/`
-
-You can also write your own standards manually — just create a `.md` file in `.codeplaybook/standards/` following the format (title, scope, rules) and sync.
-
-## Supported languages & frameworks
-
-Backend: TypeScript/NestJS, Python/Django/FastAPI/Flask, Go, Java/Spring, Kotlin, Ruby/Rails, Rust, PHP, .NET
-
-Frontend: React, Next.js, Vue/Nuxt, Angular, Svelte/SvelteKit, SolidJS
-
-Transports: REST, gRPC, GraphQL, message queues
+**Transports:** REST, gRPC, GraphQL, message queues
 
 ## License
 
-MIT
+[MIT](LICENSE)

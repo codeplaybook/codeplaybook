@@ -1,6 +1,6 @@
 {
   "name": "codeplaybook",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Agent-agnostic coding standards and commands for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.",
   "type": "commonjs",
   "bin": {
@@ -34,12 +34,16 @@
     "blueprints/",
     "analyses/",
     "workflows/",
-    "format/"
+    "format/",
+    "dashboard/"
   ],
   "scripts": {
     "test": "node bin/cli.js --version && node bin/cli.js help"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0"
   }
 }

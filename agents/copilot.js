@@ -36,6 +36,11 @@ module.exports = {
     return false;
   },
 
+  provision(projectPath) {
+    const instructionsDir = path.join(projectPath, '.github', 'instructions');
+    fs.mkdirSync(instructionsDir, { recursive: true });
+  },
+
   transform(content) {
     const files = [];
 

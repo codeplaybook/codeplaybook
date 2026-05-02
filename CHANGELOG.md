@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.5] - 2026-05-02
+
+### Added
+
+- Audit dashboard (`npx codeplaybook dashboard`) — local web UI for tracking violations
+- `audit-save` CLI command — persist audit results to SQLite (`.codeplaybook/audit.db`)
+- Severity levels in standards (Critical/High/Medium/Low, defaults to Medium)
+- Violation fingerprinting for cross-run tracking (detect new, fixed, recurring violations)
+- Code context snapshots in audit reports (~4 lines above/below violation)
+- Copy Fix Prompt — select violations in dashboard, copy formatted prompt for any AI agent
+- Trend chart showing violation counts across audit runs
+
+### Changed
+
+- Audit workflow now saves results to SQLite automatically
+- Audit report groups violations by severity
+
 ## [0.0.3] - 2026-05-01
 
 ### Fixed

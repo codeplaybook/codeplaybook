@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codeplaybook Audit Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --critical: #f85149;
+    --high: #f0883e;
+    --medium: #d29922;
+    --low: #58a6ff;
+    --fixed: #3fb950;
+    --accent: #58a6ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header h1 { font-size: 20px; font-weight: 600; }
+  header .meta { color: var(--text-muted); font-size: 14px; }
+
+  /* Summary cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .card .count {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .card .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  .card.total .count { color: var(--text); }
+  .card.critical .count { color: var(--critical); }
+  .card.high .count { color: var(--high); }
+  .card.medium .count { color: var(--medium); }
+  .card.low .count { color: var(--low); }
+
+  /* Trend chart */
+  .chart-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .chart-section h2 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .chart-container { width: 100%; height: 200px; }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--text-muted); color: var(--text); }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(88, 166, 255, 0.1); }
+
+  /* Violations list */
+  .violations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .violations-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .violation {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .violation:hover { border-color: var(--text-muted); }
+  .violation.selected { border-color: var(--accent); }
+
+  .violation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+  }
+
+  .violation-header input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+  }
+
+  .severity-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .severity-badge.critical { background: rgba(248, 81, 73, 0.2); color: var(--critical); }
+  .severity-badge.high { background: rgba(240, 136, 62, 0.2); color: var(--high); }
+  .severity-badge.medium { background: rgba(210, 153, 34, 0.2); color: var(--medium); }
+  .severity-badge.low { background: rgba(88, 166, 255, 0.2); color: var(--low); }
+
+  .violation-file {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    flex: 1;
+  }
+
+  .violation-standard {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .violation-body {
+    padding: 0 16px 12px;
+  }
+
+  .violation-rule {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .violation-evidence {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .violation-fix {
+    font-size: 13px;
+    color: var(--fixed);
+  }
+
+  /* Code snippet */
+  .code-snippet {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .code-snippet .file-header {
+    background: var(--surface);
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-line {
+    display: flex;
+    padding: 0 12px;
+  }
+
+  .code-line.highlighted {
+    background: rgba(248, 81, 73, 0.1);
+    border-left: 3px solid var(--critical);
+    padding-left: 9px;
+  }
+
+  .line-number {
+    color: var(--text-muted);
+    min-width: 40px;
+    text-align: right;
+    padding-right: 12px;
+    user-select: none;
+    opacity: 0.5;
+  }
+
+  .line-content {
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* Action bar */
+  .action-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .action-bar .selected-count {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .action-bar .buttons { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+  .btn-secondary { background: transparent; color: var(--text-muted); }
+  .btn-secondary:hover:not(:disabled) { color: var(--text); border-color: var(--text-muted); }
+
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    right: 24px;
+    background: var(--fixed);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty h2 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+
+  /* Run selector */
+  .run-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .run-selector select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .violation-header { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Codeplaybook Audit Dashboard</h1>
+    <div class="run-selector">
+      <span class="meta">Project:</span>
+      <select id="projectSelect"></select>
+      <span class="meta" style="margin-left:12px">Run:</span>
+      <select id="runSelect"></select>
+    </div>
+  </header>
+
+  <div id="content">
+    <div class="empty">
+      <h2>Loading...</h2>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar" id="actionBar" style="display:none">
+  <span class="selected-count"><span id="selectedCount">0</span> violations selected</span>
+  <div class="buttons">
+    <button class="btn btn-secondary" id="dismissBtn" disabled>Dismiss Selected</button>
+    <button class="btn btn-primary" id="copyBtn" disabled>Copy Fix Prompt</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+const state = {
+  projects: [],
+  currentProject: null,
+  runs: [],
+  violations: [],
+  trends: [],
+  currentRunId: null,
+  selectedIds: new Set(),
+  activeFilter: null
+};
+
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  return res.json();
+}
+
+function projectParam() {
+  return state.currentProject ? `project=${encodeURIComponent(state.currentProject)}` : '';
+}
+
+async function init() {
+  // Load projects
+  state.projects = await fetchJSON('/api/projects');
+
+  const projectSelect = document.getElementById('projectSelect');
+  const allOpt = document.createElement('option');
+  allOpt.value = '';
+  allOpt.textContent = 'All Projects';
+  projectSelect.appendChild(allOpt);
+
+  state.projects.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.project_name;
+    opt.textContent = `${p.project_name} (${p.total_runs} runs)`;
+    projectSelect.appendChild(opt);
+  });
+
+  // Auto-select first project if there's only one
+  if (state.projects.length === 1) {
+    state.currentProject = state.projects[0].project_name;
+    projectSelect.value = state.currentProject;
+  }
+
+  projectSelect.addEventListener('change', () => {
+    state.currentProject = projectSelect.value || null;
+    loadProject();
+  });
+
+  await loadProject();
+}
+
+async function loadProject() {
+  const pp = projectParam();
+  state.runs = await fetchJSON(`/api/runs?${pp}`);
+  state.trends = await fetchJSON(`/api/trends?limit=10&${pp}`);
+
+  if (state.runs.length === 0) {
+    document.getElementById('content').innerHTML = `
+      <div class="empty">
+        <h2>No audit runs yet</h2>
+        <p>Run /codeplaybook-audit in your coding agent to generate audit data.</p>
+      </div>`;
+    document.getElementById('actionBar').style.display = 'none';
+    // Clear run selector
+    const runSelect = document.getElementById('runSelect');
+    runSelect.innerHTML = '';
+    return;
+  }
+
+  // Populate run selector
+  const runSelect = document.getElementById('runSelect');
+  runSelect.innerHTML = '';
+  state.runs.forEach(run => {
+    const opt = document.createElement('option');
+    opt.value = run.id;
+    const date = new Date(run.run_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const label = run.project_name && !state.currentProject ? `${run.project_name} — ${date}` : date;
+    opt.textContent = `${label} (${run.total_violations} violations)`;
+    runSelect.appendChild(opt);
+  });
+
+  runSelect.onchange = () => loadRun(parseInt(runSelect.value));
+
+  // Load latest run
+  await loadRun(state.runs[0].id);
+}
+
+async function loadRun(runId) {
+  state.currentRunId = runId;
+  state.selectedIds.clear();
+  state.violations = await fetchJSON(`/api/violations?run_id=${runId}`);
+  render();
+}
+
+function render() {
+  const v = state.violations;
+  const counts = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+  v.forEach(vi => { counts[vi.severity] = (counts[vi.severity] || 0) + 1; });
+  const total = v.length;
+
+  let filtered = v;
+  if (state.activeFilter) {
+    filtered = v.filter(vi => vi.severity === state.activeFilter);
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="cards">
+      <div class="card total"><div class="count">${total}</div><div class="label">Total</div></div>
+      <div class="card critical"><div class="count">${counts.Critical}</div><div class="label">Critical</div></div>
+      <div class="card high"><div class="count">${counts.High}</div><div class="label">High</div></div>
+      <div class="card medium"><div class="count">${counts.Medium}</div><div class="label">Medium</div></div>
+      <div class="card low"><div class="count">${counts.Low}</div><div class="label">Low</div></div>
+    </div>
+
+    ${renderChart()}
+
+    <div class="violations-header">
+      <h2>Violations (${filtered.length})</h2>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn ${!state.activeFilter ? 'active' : ''}" onclick="setFilter(null)">All</button>
+      <button class="filter-btn ${state.activeFilter === 'Critical' ? 'active' : ''}" onclick="setFilter('Critical')">Critical (${counts.Critical})</button>
+      <button class="filter-btn ${state.activeFilter === 'High' ? 'active' : ''}" onclick="setFilter('High')">High (${counts.High})</button>
+      <button class="filter-btn ${state.activeFilter === 'Medium' ? 'active' : ''}" onclick="setFilter('Medium')">Medium (${counts.Medium})</button>
+      <button class="filter-btn ${state.activeFilter === 'Low' ? 'active' : ''}" onclick="setFilter('Low')">Low (${counts.Low})</button>
+    </div>
+
+    <div id="violationsList">
+      ${filtered.map(vi => renderViolation(vi)).join('')}
+    </div>
+  `;
+
+  document.getElementById('actionBar').style.display = total > 0 ? 'flex' : 'none';
+  updateActionBar();
+}
+
+function renderViolation(vi) {
+  const checked = state.selectedIds.has(vi.id) ? 'checked' : '';
+  const selected = state.selectedIds.has(vi.id) ? 'selected' : '';
+  const severity = vi.severity.toLowerCase();
+
+  let snippetHtml = '';
+  if (vi.context_snippet) {
+    try {
+      const ctx = JSON.parse(vi.context_snippet);
+      const highlightSet = new Set(ctx.highlight_lines || []);
+      snippetHtml = `
+        <div class="code-snippet">
+          <div class="file-header">${escapeHtml(vi.file)}</div>
+          ${ctx.lines.map((line, i) => {
+            const lineNum = ctx.start_line + i;
+            const isHighlighted = highlightSet.has(lineNum);
+            return `<div class="code-line ${isHighlighted ? 'highlighted' : ''}">
+              <span class="line-number">${lineNum}</span>
+              <span class="line-content">${escapeHtml(line)}</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+    } catch (_) {}
+  }
+
+  return `
+    <div class="violation ${selected}" id="v-${vi.id}">
+      <div class="violation-header" onclick="toggleSelect(${vi.id})">
+        <input type="checkbox" ${checked} onclick="event.stopPropagation(); toggleSelect(${vi.id})">
+        <span class="severity-badge ${severity}">${vi.severity}</span>
+        <span class="violation-file">${escapeHtml(vi.file)}:${vi.line || '?'}</span>
+        <span class="violation-standard">${escapeHtml(vi.standard_name)}</span>
+      </div>
+      <div class="violation-body">
+        <div class="violation-rule">Rule: ${escapeHtml(vi.rule)}</div>
+        <div class="violation-evidence">Found: ${escapeHtml(vi.evidence)}</div>
+        ${vi.suggested_fix ? `<div class="violation-fix">Fix: ${escapeHtml(vi.suggested_fix)}</div>` : ''}
+        ${snippetHtml}
+      </div>
+    </div>`;
+}
+
+function renderChart() {
+  if (state.trends.length < 2) return '';
+
+  const maxVal = Math.max(...state.trends.map(t => t.total), 1);
+  const w = 100;
+  const h = 200;
+  const padding = 40;
+  const chartW = w - padding;
+  const chartH = h - 30;
+  const step = state.trends.length > 1 ? chartW / (state.trends.length - 1) : 0;
+
+  function makeLine(key, color) {
+    const points = state.trends.map((t, i) => {
+      const x = padding + i * step;
+      const y = chartH - (t[key] / maxVal * (chartH - 10));
+      return `${x},${y}`;
+    }).join(' ');
+    return `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  }
+
+  const svg = `
+    <svg viewBox="0 0 ${w} ${h}" class="chart-container" preserveAspectRatio="none">
+      ${makeLine('Critical', 'var(--critical)')}
+      ${makeLine('High', 'var(--high)')}
+      ${makeLine('Medium', 'var(--medium)')}
+      ${makeLine('Low', 'var(--low)')}
+    </svg>`;
+
+  return `
+    <div class="chart-section">
+      <h2>Trend (last ${state.trends.length} audits)</h2>
+      <div style="display:flex;gap:16px;margin-bottom:8px;font-size:12px;">
+        <span style="color:var(--critical)">&#9679; Critical</span>
+        <span style="color:var(--high)">&#9679; High</span>
+        <span style="color:var(--medium)">&#9679; Medium</span>
+        <span style="color:var(--low)">&#9679; Low</span>
+      </div>
+      ${svg}
+    </div>`;
+}
+
+function setFilter(severity) {
+  state.activeFilter = severity;
+  render();
+}
+
+function toggleSelect(id) {
+  if (state.selectedIds.has(id)) {
+    state.selectedIds.delete(id);
+  } else {
+    state.selectedIds.add(id);
+  }
+  const el = document.getElementById(`v-${id}`);
+  if (el) el.classList.toggle('selected', state.selectedIds.has(id));
+  const cb = el?.querySelector('input[type="checkbox"]');
+  if (cb) cb.checked = state.selectedIds.has(id);
+  updateActionBar();
+}
+
+function updateActionBar() {
+  const count = state.selectedIds.size;
+  document.getElementById('selectedCount').textContent = count;
+  document.getElementById('copyBtn').disabled = count === 0;
+  document.getElementById('dismissBtn').disabled = count === 0;
+}
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const selected = state.violations.filter(v => state.selectedIds.has(v.id));
+  const prompt = buildFixPrompt(selected);
+  navigator.clipboard.writeText(prompt).then(() => {
+    showToast('Copied to clipboard!');
+  });
+});
+
+document.getElementById('dismissBtn').addEventListener('click', async () => {
+  const ids = [...state.selectedIds];
+  for (const id of ids) {
+    await fetch(`/api/violations/${id}/status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'dismissed' })
+    });
+  }
+  state.selectedIds.clear();
+  await loadRun(state.currentRunId);
+  showToast(`Dismissed ${ids.length} violations`);
+});
+
+function buildFixPrompt(violations) {
+  let prompt = 'Fix these violations in my codebase:\n\n';
+  violations.forEach((v, i) => {
+    prompt += `${i + 1}. [${v.severity}] ${v.file}:${v.line || '?'}\n`;
+    prompt += `   Standard: ${v.standard_name}\n`;
+    prompt += `   Violation: ${v.evidence}\n`;
+    prompt += `   Rule: ${v.rule}\n`;
+    if (v.suggested_fix) {
+      prompt += `   Suggested fix: ${v.suggested_fix}\n`;
+    }
+    prompt += '\n';
+  });
+  prompt += 'Reference standards: .codeplaybook/standards/\n';
+  prompt += 'Apply fixes one at a time, verifying each before moving to the next.\n';
+  return prompt;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+init();
+</script>
+</body>
+</html>

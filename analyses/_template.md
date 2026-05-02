@@ -59,6 +59,10 @@ For each finding above the reporting threshold:
 
 {Description based on the finding}
 
+## Severity
+
+{Critical, High, Medium, or Low — based on impact of the finding}
+
 ## Scope
 
 {Derived from the files where the pattern was found}

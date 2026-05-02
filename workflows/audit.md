@@ -1,19 +1,21 @@
 # Audit Workflow
 
-Scan the codebase against existing `.codeplaybook/standards/` and report violations. Optionally fix them with user confirmation.
+Scan the codebase against existing `.codeplaybook/standards/` and report violations. Optionally fix them with user confirmation. Persists results to SQLite for tracking over time.
 
 ## Overview
 
-This workflow checks whether your code actually follows the standards you've defined. It reads each standard's scope and rules, scans matching files for violations, and presents a report. You can then choose to fix violations, export the report, or dismiss.
+This workflow checks whether your code actually follows the standards you've defined. It reads each standard's scope, severity, and rules, scans matching files for violations, presents a report grouped by severity, saves results to a local database, and optionally fixes violations.
 
-This workflow is agent-agnostic. It reads standards directly from `.codeplaybook/standards/` (the source of truth) and operates on source files. No agent-specific variables are needed.
+This workflow is agent-agnostic. It reads standards directly from `.codeplaybook/standards/` (the source of truth) and operates on source files.
 
 ## Guarantees
 
 - **Read-only scan.** The audit phase only reads files — no modifications until the user explicitly approves fixes.
 - **Evidence required.** Every violation must include the file path, line number, and a brief description of what was found.
+- **Context captured.** Each violation includes ~4 lines of code above and below the violation line for context.
 - **Fix with confirmation.** Each proposed fix is shown as a diff and requires user approval before applying.
 - **Non-destructive.** Fixes modify only the specific code that violates a rule — surrounding code is untouched.
+- **Persistent history.** Results are saved to `~/.codeplaybook/audit.db` (user-level) for tracking progress across all projects.
 
 ---
 
@@ -33,6 +35,7 @@ Read all standard files from `.codeplaybook/standards/*.md`.
 
 For each file, parse:
 - **Name**: The H1 heading (`# {Name}`)
+- **Severity**: The content under `## Severity` — if absent, default to `Medium`. Valid values: `Critical`, `High`, `Medium`, `Low`.
 - **Scope**: The content under `## Scope` — this determines which files to scan
 - **Rules**: The bullet points under `## Rules` — these are what we check for
 
@@ -49,8 +52,8 @@ Otherwise, print:
 
 ```
 Loaded [N] standards from .codeplaybook/standards/:
-  - [Name 1] (scope: [scope summary])
-  - [Name 2] (scope: [scope summary])
+  - [Name 1] ([severity], scope: [scope summary])
+  - [Name 2] ([severity], scope: [scope summary])
   ...
 ```
 
@@ -83,10 +86,17 @@ For each rule in the standard:
    - "Use intersection types for DTO enrichment" → look for DTOs that manually redeclare domain fields instead of using `&`
 3. For each violation found, assign a sequential number (`[1]`, `[2]`, ...) across all standards and record:
    - `number`: sequential violation number (used for "Fix selected" in Step 4)
-   - `file`: the file path relative to project root
-   - `line`: the line number where the violation occurs
+   - `file`: the file path relative to project root (must be a file, not a directory)
+   - `line`: the exact line number where the violation starts (not just `1` — find the actual line)
+   - `end_line`: the line number where the violation ends (same as `line` if single-line)
+   - `standard_name`: the name of the standard being checked
+   - `standard_slug`: the filename slug of the standard (e.g., `codeplaybook-feature-isolation`)
+   - `severity`: the severity from the standard (`Critical`, `High`, `Medium`, or `Low`)
    - `rule`: the rule text that was violated
    - `evidence`: a brief description of what was found (e.g., "Database query `db.query(...)` in controller method `createUser`")
+   - `suggested_fix`: a brief description of how to fix it (e.g., "Move query to UserRepository")
+
+   **Do NOT include code snippets or a `context` field.** The CLI automatically reads the source file and captures ±4 lines around the violation line when saving to the database.
 
 ### 2c — Skip compliant files
 
@@ -110,31 +120,107 @@ No violations found. Your codebase follows the defined standards.
 
 Exit the workflow.
 
-If violations were found, print:
+If violations were found, group by severity and print:
 
 ```
 ============================================================
   AUDIT REPORT
 ============================================================
 
-Standard: [Standard Name]
-  Scope: [scope description]
+CRITICAL ([count]):
 
-  VIOLATIONS ([count]):
+  [1] [file]:[line]
+      Standard: [Standard Name]
+      Rule: "[rule text]"
+      Found: [evidence description]
+      Fix: [suggested fix]
 
-  1. [file]:[line]
-     Rule: "[rule text]"
-     Found: [evidence description]
+HIGH ([count]):
 
-  2. [file]:[line]
-     Rule: "[rule text]"
-     Found: [evidence description]
+  [2] [file]:[line]
+      Standard: [Standard Name]
+      Rule: "[rule text]"
+      Found: [evidence description]
+      Fix: [suggested fix]
 
-[Repeat for each standard with violations]
+MEDIUM ([count]):
+
+  [3] [file]:[line]
+      Standard: [Standard Name]
+      Rule: "[rule text]"
+      Found: [evidence description]
+      Fix: [suggested fix]
+
+LOW ([count]):
+
+  ...
 
 ------------------------------------------------------------
-Summary: [total violations] violations across [N] standards in [M] files
+Summary: [total] violations ([critical] critical, [high] high,
+         [medium] medium, [low] low) across [N] standards
 ============================================================
+```
+
+Omit severity groups that have zero violations.
+
+---
+
+## Step 3.5 — Save to Audit History
+
+After presenting the report, silently save the results to the audit database:
+
+**Every violation MUST include ALL required fields.** The `audit-save` command will reject the data if any required field is missing:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `file` | Yes | File path relative to project root |
+| `line` | Yes | Line number where violation starts |
+| `end_line` | No | Line number where violation ends (defaults to `line`) |
+| `standard_name` | Yes | Name of the standard |
+| `standard_slug` | Yes | Filename slug of the standard |
+| `severity` | Yes | `Critical`, `High`, `Medium`, or `Low` |
+| `rule` | Yes | The rule text that was violated |
+| `evidence` | Yes | What was found |
+| `suggested_fix` | No | How to fix it |
+| `context` | Auto | **Do not provide.** The CLI reads the actual file and captures ±4 lines around the violation automatically. |
+
+1. Write the violations as JSON to `.codeplaybook/audit-results.json`:
+
+```json
+{
+  "standards_checked": 5,
+  "violations": [
+    {
+      "file": "src/controllers/user.ts",
+      "line": 42,
+      "end_line": 43,
+      "standard_name": "Architecture Boundaries",
+      "standard_slug": "codeplaybook-architecture-boundaries",
+      "severity": "High",
+      "rule": "Controllers must not contain business logic",
+      "evidence": "Database query db.query(...) in controller method createUser",
+      "suggested_fix": "Move query to UserRepository"
+    }
+  ]
+}
+```
+
+2. Run the CLI command to save:
+
+```bash
+codeplaybook audit-save --file .codeplaybook/audit-results.json
+```
+
+3. Delete the temporary JSON file after successful save.
+
+This step requires no user interaction. If the save fails, print a warning but continue to Step 4.
+
+After saving, print:
+
+```
+Audit results saved. View the full dashboard with:
+  npx codeplaybook dashboard
+  → http://localhost:4200
 ```
 
 ---
@@ -168,6 +254,10 @@ Print:
 
 ```
 Report saved to .codeplaybook/audit-report.md
+
+View results interactively with:
+  npx codeplaybook dashboard
+  → http://localhost:4200
 ```
 
 Exit the workflow.
@@ -293,3 +383,13 @@ If fixing one violation would affect code near another violation in the same fil
 ### Not a git repository
 
 Unlike onboard/prescribe, audit does NOT require a git repository. It works on any directory with `.codeplaybook/standards/`.
+
+### audit-save fails
+
+If the `codeplaybook audit-save` command fails (e.g., `better-sqlite3` not available), print a warning:
+
+```
+Warning: Could not save audit results to database. Install dependencies with npm install in the codeplaybook package directory.
+```
+
+Continue to Step 4 — the audit report is still displayed, just not persisted.

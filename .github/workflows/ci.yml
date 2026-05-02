@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install dependencies
+        run: npm install
+
       - name: CLI version
         run: node bin/cli.js --version
 
@@ -35,6 +38,7 @@ jobs:
           test -f .claude/skills/codeplaybook-onboard/SKILL.md
           test -f .claude/skills/codeplaybook-prescribe/SKILL.md
           test -f .claude/skills/codeplaybook-sync/SKILL.md
+          test -f .claude/skills/codeplaybook-audit/SKILL.md
           echo "Claude adapter: OK"
 
       - name: Test Cursor adapter
@@ -45,6 +49,7 @@ jobs:
           test -f .cursor/rules/codeplaybook-onboard.md
           test -f .cursor/rules/codeplaybook-prescribe.md
           test -f .cursor/rules/codeplaybook-sync.md
+          test -f .cursor/rules/codeplaybook-audit.md
           echo "Cursor adapter: OK"
 
       - name: Test Copilot adapter
@@ -80,4 +85,17 @@ jobs:
           test -f workflows/onboard.md
           test -f workflows/prescribe.md
           test -f workflows/sync.md
-          echo "Workflows: 3 files OK"
+          test -f workflows/audit.md
+          echo "Workflows: 4 files OK"
+
+      - name: Test audit-save command
+        run: |
+          mkdir -p /tmp/test-audit/.codeplaybook
+          cd /tmp/test-audit
+          echo '{"standards_checked":1,"violations":[{"file":"test.ts","line":1,"standard_name":"Test","standard_slug":"test","severity":"Medium","rule":"test rule","evidence":"test evidence"}]}' > /tmp/audit-test.json
+          node $GITHUB_WORKSPACE/bin/cli.js audit-save --file /tmp/audit-test.json
+          test -f .codeplaybook/audit.db
+          echo "audit-save: OK"
+
+      - name: Verify dashboard exists
+        run: test -f dashboard/index.html && echo "Dashboard: OK"

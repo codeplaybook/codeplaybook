@@ -19,6 +19,10 @@
 
 {What this standard enforces and why.}
 
+#### Severity
+
+{Critical, High, Medium, or Low. Defaults to Medium if omitted.}
+
 #### Scope
 
 {Where this standard applies -- specific directories, file types, layers.}

@@ -32,6 +32,10 @@ All files use slugified names with a `codeplaybook-` prefix:
 {Description — what this standard enforces and why it matters.
 Reference evidence found during analysis when applicable.}
 
+## Severity
+
+{Critical, High, Medium, or Low}
+
 ## Scope
 
 {Where this standard applies. Be specific:
@@ -53,6 +57,7 @@ Reference evidence found during analysis when applicable.}
 |-------|----------|-------------|
 | Name (H1) | Yes | Human-readable standard name |
 | Description | Yes | What the standard covers and why. First sentence used as summary in agent config. |
+| Severity | No | `Critical`, `High`, `Medium`, or `Low`. Defaults to `Medium` if omitted. Used by the audit workflow and dashboard to prioritize violations. |
 | Scope | Yes | Where rules apply. Used by agent adapters to generate file-matching patterns (globs). |
 | Rules | Yes | Concrete, actionable rules. Each starts with an imperative verb. |
 

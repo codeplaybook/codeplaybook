@@ -19,6 +19,10 @@ module.exports = {
     return fs.existsSync(path.join(projectPath, '.cursor'));
   },
 
+  provision(projectPath) {
+    fs.mkdirSync(path.join(projectPath, '.cursor'), { recursive: true });
+  },
+
   transform(content) {
     const files = [];
 

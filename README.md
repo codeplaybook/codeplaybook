@@ -105,6 +105,22 @@ your-project/
 
 Edit files in `.codeplaybook/`, then run `/codeplaybook-sync` to re-deploy to your agent.
 
+## Audit Dashboard
+
+Track violations over time with a local web dashboard:
+
+```bash
+npx codeplaybook dashboard
+```
+
+The dashboard shows:
+- Violations grouped by severity (Critical / High / Medium / Low)
+- Trend chart across audit runs
+- Code snippets showing exactly where violations occur
+- **Copy Fix Prompt** — select violations, click copy, paste into your agent to fix them
+
+Audit results are saved automatically to `.codeplaybook/audit.db` each time you run `/codeplaybook-audit`.
+
 ## Architectural Blueprints
 
 | Blueprint | What It Prescribes |

@@ -68,6 +68,16 @@ module.exports = {
       })
     });
 
+    // --- Audit skill ---
+    files.push({
+      path: '.claude/skills/codeplaybook-audit/SKILL.md',
+      content: wrapSkillMd({
+        name: 'codeplaybook-audit',
+        description: 'Audit codebase against .codeplaybook/ standards. Reports violations and offers to fix them.',
+        body: resolveVars(content.workflows.audit)
+      })
+    });
+
     return files;
   }
 };

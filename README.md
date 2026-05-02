@@ -31,6 +31,7 @@ Different formats. Different folders. Same content copied over and over.
 
 - **Prescribe** architecture upfront — pick hexagonal, clean architecture, or feature slices and get standards generated from curated blueprints. Your agent follows the rules from day one.
 - **Onboard** your existing codebase — scan for recurring patterns and turn them into enforceable standards.
+- **Audit** your code against those standards — find violations, fix them with confirmation.
 - **Sync** everywhere — one source of truth, deployed to Claude Code, Cursor, and Copilot automatically.
 
 No cloud. No database. Just local markdown files you own and control.
@@ -65,17 +66,25 @@ npx codeplaybook init
   → analyzes your codebase for recurring patterns
   → generates standards + commands in .codeplaybook/
 
+/codeplaybook-audit
+  → scans codebase against your standards
+  → reports violations, offers to fix them
+
 /codeplaybook-sync
   → re-deploys .codeplaybook/ to your agent's format
 ```
 
-### Two Modes
+### Four Workflows
 
 **Prescribe** — Declare your architectural intent upfront. Pick a blueprint, get standards and commands generated from curated patterns. Best for new projects or adopting a new architecture.
 
 **Onboard** — Scan your codebase for recurring patterns and discover conventions worth preserving. Generates standards from what already exists. Best for established projects.
 
-Both output to `.codeplaybook/` (agent-agnostic). Use them together: prescribe first, then onboard finds additional patterns on top.
+**Audit** — Check if your codebase actually follows the standards. Reports violations with file paths and line numbers. Offers to fix them with your confirmation.
+
+**Sync** — Re-deploy standards from `.codeplaybook/` to your agent's format after manual edits.
+
+Use them together: prescribe first, then onboard finds additional patterns, then audit enforces them over time.
 
 ## What Gets Generated
 

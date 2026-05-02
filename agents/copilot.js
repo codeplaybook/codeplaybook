@@ -88,6 +88,16 @@ module.exports = {
       })
     });
 
+    // --- Audit instruction ---
+    const auditBody = resolveVars(content.workflows.audit);
+    files.push({
+      path: '.github/instructions/codeplaybook-audit.md',
+      content: wrapInstruction({
+        description: 'Audit codebase against .codeplaybook/ standards. Reports violations and offers to fix them.',
+        body: auditBody
+      })
+    });
+
     // --- Prompts (invocable shortcuts) ---
     files.push({
       path: '.github/prompts/codeplaybook-onboard.prompt.md',
@@ -102,6 +112,11 @@ module.exports = {
     files.push({
       path: '.github/prompts/codeplaybook-sync.prompt.md',
       content: 'Run the codeplaybook sync workflow: re-deploy standards and commands from .codeplaybook/ to the agent directories. Follow the instructions in .github/instructions/codeplaybook-sync.md.'
+    });
+
+    files.push({
+      path: '.github/prompts/codeplaybook-audit.prompt.md',
+      content: 'Run the codeplaybook audit workflow: scan this codebase against the standards in .codeplaybook/standards/, report violations, and offer to fix them. Follow the instructions in .github/instructions/codeplaybook-audit.md.'
     });
 
     return files;

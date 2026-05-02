@@ -72,6 +72,16 @@ module.exports = {
       })
     });
 
+    // --- Audit rule ---
+    const auditBody = resolveVars(content.workflows.audit);
+    files.push({
+      path: '.cursor/rules/codeplaybook-audit.md',
+      content: wrapCursorRule({
+        description: 'Audit codebase against .codeplaybook/ standards. Reports violations and offers to fix them.',
+        body: auditBody
+      })
+    });
+
     return files;
   }
 };

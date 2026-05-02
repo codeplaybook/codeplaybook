@@ -549,6 +549,19 @@ Next steps:
 ============================================================
 ```
 
+Then ask via AskUserQuestion:
+
+```
+Would you like to audit your codebase against the new standards?
+This will scan your code for violations and offer to fix them.
+```
+
+With options:
+- **Run audit now** — Run `/codeplaybook-audit` immediately
+- **Skip for now** — Exit (user can run audit later)
+
+If "Run audit now": proceed to execute the audit workflow.
+
 ### Partial success
 
 If some files failed to deploy, print:

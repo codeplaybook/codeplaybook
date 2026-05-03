@@ -1,0 +1,127 @@
+/* ============================================================
+   Codeplaybook Design System — Tokens
+   Vibe: technical & raw (Railway / Supabase / Resend)
+   Mode: dark-first
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Surfaces */
+  --cp-bg:           #0A0A0B;
+  --cp-bg-elev-1:    #111113;
+  --cp-bg-elev-2:    #16161A;
+  --cp-bg-elev-3:    #1C1C21;
+  --cp-bg-inset:     #0E0E10;
+
+  /* Borders */
+  --cp-border:       #1F1F24;
+  --cp-border-strong:#2A2A31;
+  --cp-border-muted: #17171B;
+
+  /* Text */
+  --cp-fg:           #F4F4F5;
+  --cp-fg-2:         #B4B4BB;
+  --cp-fg-3:         #7A7A82;
+  --cp-fg-4:         #4A4A52;
+  --cp-fg-on-accent: #0A0A0B;
+
+  /* Accent: Codeplaybook Orange */
+  --cp-accent:        #FF5C28;
+  --cp-accent-hover:  #FF6E40;
+  --cp-accent-soft:   rgba(255, 92, 40, 0.10);
+  --cp-accent-ring:   rgba(255, 92, 40, 0.35);
+  --cp-accent-fg:     #FFB89D;
+
+  /* Severity */
+  --cp-critical:     #FF4D4D;
+  --cp-critical-bg:  rgba(255, 77, 77, 0.14);
+  --cp-critical-fg:  #FF8E8E;
+
+  --cp-high:         #FF5C28;
+  --cp-high-bg:      rgba(255, 92, 40, 0.14);
+  --cp-high-fg:      #FFB89D;
+
+  --cp-medium:       #E5B53D;
+  --cp-medium-bg:    rgba(229, 181, 61, 0.14);
+  --cp-medium-fg:    #F2D079;
+
+  --cp-low:          #6C9EFF;
+  --cp-low-bg:       rgba(108, 158, 255, 0.14);
+  --cp-low-fg:       #A8C4FF;
+
+  /* Status */
+  --cp-success:      #3DDC84;
+  --cp-success-bg:   rgba(61, 220, 132, 0.14);
+  --cp-success-fg:   #7CE8B0;
+
+  /* Typography */
+  --cp-font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --cp-font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Radii */
+  --cp-radius-sm:   4px;
+  --cp-radius-md:   6px;
+  --cp-radius-lg:   8px;
+  --cp-radius-pill: 999px;
+
+  /* Shadows */
+  --cp-shadow-sm:  0 2px 6px rgba(0, 0, 0, 0.35);
+  --cp-shadow-md:  0 8px 20px rgba(0, 0, 0, 0.45);
+  --cp-shadow-lg:  0 20px 48px rgba(0, 0, 0, 0.55);
+  --cp-focus-ring: 0 0 0 3px var(--cp-accent-ring);
+
+  /* Grid pattern */
+  --cp-grid-color:   rgba(255, 255, 255, 0.035);
+  --cp-grid-size:    32px;
+  --cp-grid-pattern:
+    linear-gradient(to right,  var(--cp-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--cp-grid-color) 1px, transparent 1px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--cp-bg);
+  color: var(--cp-fg);
+  font-family: var(--cp-font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--cp-fg); text-decoration: none; }
+::selection { background: var(--cp-accent); color: var(--cp-fg-on-accent); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--cp-border);
+  border-radius: var(--cp-radius-pill);
+  border: 2px solid var(--cp-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--cp-border-strong); }
+
+/* ============ Grid background utility ============ */
+.cp-grid-bg {
+  background-image: var(--cp-grid-pattern);
+  background-size: var(--cp-grid-size) var(--cp-grid-size);
+}
+
+/* ============ Buttons ============ */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 18px; border-radius: 5px;
+  font-family: var(--cp-font-sans); font-size: 14px; font-weight: 500;
+  letter-spacing: -0.01em; cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 150ms cubic-bezier(0.2,0,0,1);
+  text-decoration: none;
+}
+.btn--primary { background: var(--cp-accent); color: var(--cp-fg-on-accent); border-color: var(--cp-accent); }
+.btn--primary:hover { background: var(--cp-accent-hover); border-color: var(--cp-accent-hover); }
+.btn--ghost { background: transparent; color: var(--cp-fg-2); border-color: var(--cp-border-strong); }
+.btn--ghost:hover { background: var(--cp-bg-elev-1); color: var(--cp-fg); }

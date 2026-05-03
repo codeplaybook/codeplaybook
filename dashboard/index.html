@@ -1,667 +1,1023 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Codeplaybook Audit Dashboard</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>codeplaybook · dashboard</title>
+<link rel="stylesheet" href="design-system.css">
 <style>
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --critical: #f85149;
-    --high: #f0883e;
-    --medium: #d29922;
-    --low: #58a6ff;
-    --fixed: #3fb950;
-    --accent: #58a6ff;
-  }
+html, body, #root { height: 100%; }
+body {
+  background: var(--cp-bg);
+  background-attachment: fixed;
+  overflow: hidden;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ===== App shell ===== */
+.app { height: 100vh; display: grid; grid-template-rows: 1fr; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-  }
+/* ===== Body grid ===== */
+.body {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100%;
+  min-height: 0;
+}
 
-  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+/* ===== Repo sidebar ===== */
+.repos {
+  border-right: 1px solid var(--cp-border);
+  background: var(--cp-bg-elev-1);
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+.repos__hd {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--cp-border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.repos__title {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.repos__title h2 {
+  font-family: var(--cp-font-sans);
+  font-size: 13px; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--cp-fg);
+  margin: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.repos__title h2 .count {
+  font-family: var(--cp-font-mono);
+  font-size: 11px; font-weight: 400; color: var(--cp-fg-3);
+  letter-spacing: -0.02em;
+}
+.repos__filter {
+  display: flex; align-items: center;
+  background: var(--cp-bg-inset);
+  border: 1px solid var(--cp-border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: var(--cp-font-mono); font-size: 12px;
+  letter-spacing: -0.02em;
+  gap: 6px;
+}
+.repos__filter input {
+  background: transparent; border: 0; color: var(--cp-fg);
+  font: inherit; outline: none; flex: 1; letter-spacing: -0.02em;
+}
+.repos__filter input::placeholder { color: var(--cp-fg-4); }
+.repos__filter .x {
+  font-family: var(--cp-font-mono); font-size: 11px;
+  color: var(--cp-fg-3); cursor: pointer;
+  padding: 1px 4px; border-radius: 3px;
+}
+.repos__filter .x:hover { background: var(--cp-bg-elev-2); color: var(--cp-fg); }
+.repos__sort {
+  display: flex; gap: 4px;
+  font-family: var(--cp-font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--cp-fg-3);
+}
+.repos__sort button {
+  background: transparent; border: 0;
+  color: var(--cp-fg-3); padding: 3px 7px;
+  border-radius: 3px; cursor: pointer;
+  font: inherit; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.repos__sort button:hover { color: var(--cp-fg); }
+.repos__sort button.active { color: var(--cp-fg); background: var(--cp-bg-elev-2); }
+.repos__list {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: 8px 0;
+}
 
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }
+.repo {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 10px 16px 10px 14px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid var(--cp-border-muted);
+  transition: background 120ms, border-color 120ms;
+}
+.repo:hover { background: var(--cp-bg-elev-2); }
+.repo.active {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--cp-accent) 14%, transparent) 0%, var(--cp-bg-elev-2) 60%);
+  border-left-color: var(--cp-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cp-accent) 24%, transparent);
+}
+.repo.active .repo__icon {
+  background: color-mix(in oklab, var(--cp-accent) 18%, var(--cp-bg-inset));
+  border-color: color-mix(in oklab, var(--cp-accent) 45%, var(--cp-border));
+  color: var(--cp-accent);
+}
+.repo.active .repo__name { color: var(--cp-fg); }
+.repo.active .repo__count { color: var(--cp-fg); }
+.repo__icon {
+  width: 24px; height: 24px;
+  border-radius: 4px;
+  background: var(--cp-bg-inset);
+  border: 1px solid var(--cp-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cp-fg-2);
+}
+.repo__main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.repo__name {
+  font-family: var(--cp-font-mono); font-size: 13px;
+  color: var(--cp-fg); letter-spacing: -0.02em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.repo__sub {
+  font-family: var(--cp-font-mono); font-size: 11px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+}
+.repo__rhs {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+}
+.repo__count {
+  font-family: var(--cp-font-mono); font-size: 16px; font-weight: 500;
+  letter-spacing: -0.04em; line-height: 1;
+  color: var(--cp-fg);
+  font-variant-numeric: tabular-nums;
+}
+.repo__count.zero { color: var(--cp-fg-3); }
+.repo__sevbar {
+  display: flex; gap: 2px; height: 3px; width: 60px;
+  border-radius: 999px; overflow: hidden;
+  background: var(--cp-bg-inset);
+}
+.repo__sevbar span { height: 100%; }
+.repo__sevbar .crit { background: var(--cp-critical); }
+.repo__sevbar .high { background: var(--cp-high); }
+.repo__sevbar .med  { background: var(--cp-medium); }
+.repo__sevbar .low  { background: var(--cp-low); }
 
-  header h1 { font-size: 20px; font-weight: 600; }
-  header .meta { color: var(--text-muted); font-size: 14px; }
+/* ===== Main pane ===== */
+.pane {
+  min-height: 0;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.pane__hd {
+  padding: 24px 28px 18px;
+  border-bottom: 1px solid var(--cp-border);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.pane__top {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;
+}
+.pane__lhs { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pane__crumb {
+  font-family: var(--cp-font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--cp-fg-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.pane__crumb a { color: var(--cp-fg-3); text-decoration: none; }
+.pane__crumb a:hover { color: var(--cp-fg); }
+.pane__crumb .accent { color: var(--cp-accent); }
+.pane__title {
+  font-family: var(--cp-font-sans);
+  font-size: 28px; font-weight: 600;
+  letter-spacing: -0.035em; line-height: 1.1;
+  color: var(--cp-fg);
+  margin: 0;
+}
+.pane__sub {
+  font-size: 13px; color: var(--cp-fg-2); line-height: 1.55;
+  margin-top: 2px;
+}
+.pane__sub .code-inline {
+  font-family: var(--cp-font-mono); font-size: 11.5px;
+  background: var(--cp-bg-inset); padding: 1px 5px; border-radius: 3px;
+  border: 1px solid var(--cp-border); color: var(--cp-accent-fg);
+  letter-spacing: -0.02em;
+}
+.pane__rhs { display: flex; gap: 8px; align-items: center; }
 
-  /* Summary cards */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
+/* ===== Stats row ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.stat {
+  background: var(--cp-bg-elev-1); border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-md); padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  min-height: 78px;
+}
+.stat__lbl {
+  font-family: var(--cp-font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--cp-fg-3);
+}
+.stat__num {
+  font-family: var(--cp-font-mono); font-size: 28px;
+  font-weight: 500; letter-spacing: -0.04em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    text-align: center;
-  }
+/* ===== Toolbar ===== */
+.toolbar {
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--cp-border);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; flex-wrap: wrap;
+}
+.toolbar__lhs { display: flex; gap: 6px; flex-wrap: wrap; }
+.toolbar__rhs { display: flex; gap: 8px; align-items: center; }
+.toolbar__sort {
+  font-family: var(--cp-font-mono); font-size: 12px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+}
 
-  .card .count {
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1.2;
-  }
+/* ===== Chips ===== */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: var(--cp-radius-pill);
+  background: var(--cp-bg-elev-1); border: 1px solid var(--cp-border-strong);
+  color: var(--cp-fg-2); font-family: var(--cp-font-sans); font-size: 12px;
+  letter-spacing: -0.01em; cursor: pointer;
+  transition: all 120ms;
+}
+.chip:hover { color: var(--cp-fg); border-color: var(--cp-fg-3); }
+.chip.active { background: var(--cp-accent-soft); border-color: var(--cp-accent); color: var(--cp-accent-fg); }
+.chip__count { font-family: var(--cp-font-mono); font-size: 11px; color: var(--cp-fg-3); letter-spacing: -0.02em; }
+.chip.active .chip__count { color: var(--cp-accent-fg); }
 
-  .card .label {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 4px;
-  }
+/* ===== Violations list ===== */
+.list {
+  flex: 1; min-height: 0;
+  overflow-y: auto;
+  padding: 18px 28px 96px;
+}
+.list__inner { display: flex; flex-direction: column; gap: 10px; }
 
-  .card.total .count { color: var(--text); }
-  .card.critical .count { color: var(--critical); }
-  .card.high .count { color: var(--high); }
-  .card.medium .count { color: var(--medium); }
-  .card.low .count { color: var(--low); }
+.v {
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-md);
+  overflow: hidden;
+  transition: border-color 120ms;
+}
+.v:hover { border-color: var(--cp-border-strong); }
+.v.selected { border-color: var(--cp-accent); }
+.v.collapsed .v__body { display: none; }
 
-  /* Trend chart */
-  .chart-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 24px;
-  }
+.v__hd {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--cp-border-muted);
+  cursor: pointer;
+}
+.v.collapsed .v__hd { border-bottom: 0; }
+.v__cb {
+  width: 14px; height: 14px;
+  accent-color: var(--cp-accent);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.v__head-main {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.v__head-rule {
+  font-family: var(--cp-font-sans); font-size: 13.5px;
+  color: var(--cp-fg); line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.v__head-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--cp-font-mono); font-size: 11.5px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+}
+.v__dot { color: var(--cp-fg-4); }
+.v__file {
+  color: var(--cp-fg-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 50%;
+}
+.v__file .ln { color: var(--cp-fg-3); }
+.v__std { color: var(--cp-fg-3); }
+.v__chevron {
+  width: 16px; height: 16px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cp-fg-3); font-family: var(--cp-font-mono); font-size: 10px;
+  transition: transform 120ms;
+  margin-top: 2px;
+}
+.v.collapsed .v__chevron { transform: rotate(-90deg); }
 
-  .chart-section h2 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+.v__body {
+  padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px;
+}
+.v__lead {
+  display: inline-block; min-width: 48px;
+  font-family: var(--cp-font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--cp-fg-3); margin-right: 8px;
+}
+.v__rule  { color: var(--cp-fg); line-height: 1.55; }
+.v__found { color: var(--cp-fg-2); line-height: 1.55; }
+.v__fix   { color: var(--cp-success-fg); line-height: 1.55; }
+.v__fix .v__lead { color: var(--cp-success); }
 
-  .chart-container { width: 100%; height: 200px; }
+/* ===== Severity badge ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 8px; border-radius: var(--cp-radius-pill);
+  font-family: var(--cp-font-mono); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.badge__dot { width: 5px; height: 5px; border-radius: 999px; }
+.badge--critical { background: var(--cp-critical-bg); color: var(--cp-critical-fg); }
+.badge--critical .badge__dot { background: var(--cp-critical); }
+.badge--high     { background: var(--cp-high-bg);     color: var(--cp-high-fg); }
+.badge--high     .badge__dot { background: var(--cp-high); }
+.badge--medium   { background: var(--cp-medium-bg);   color: var(--cp-medium-fg); }
+.badge--medium   .badge__dot { background: var(--cp-medium); }
+.badge--low      { background: var(--cp-low-bg);      color: var(--cp-low-fg); }
+.badge--low      .badge__dot { background: var(--cp-low); }
 
-  /* Filters */
-  .filters {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
+/* ===== Code snippet ===== */
+.code {
+  background: var(--cp-bg-inset);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  font-family: var(--cp-font-mono); font-size: 12px;
+  letter-spacing: -0.02em;
+  margin-top: 4px; overflow: hidden;
+}
+.code__hd {
+  background: var(--cp-bg-elev-2);
+  border-bottom: 1px solid var(--cp-border);
+  padding: 6px 12px;
+  font-size: 11px; color: var(--cp-fg-3);
+  display: flex; justify-content: space-between;
+}
+.code__hd .meta { color: var(--cp-fg-4); }
+.code__body { padding: 8px 0; }
+.code__ln { display: flex; padding: 0 12px; line-height: 1.65; }
+.code__ln.hl {
+  background: var(--cp-accent-soft);
+  box-shadow: inset 3px 0 0 var(--cp-accent);
+  padding-left: 9px;
+}
+.code__nu {
+  color: var(--cp-fg-4);
+  min-width: 32px; text-align: right; padding-right: 12px;
+  user-select: none;
+}
+.code__line { color: var(--cp-fg-2); white-space: pre; }
 
-  .filter-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 6px 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.15s;
-  }
+/* ===== Empty state ===== */
+.empty {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  gap: 10px;
+}
+.empty__icon {
+  width: 56px; height: 56px;
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  background: var(--cp-bg-elev-1);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cp-success);
+  font-family: var(--cp-font-mono); font-size: 22px;
+}
+.empty h3 {
+  font-family: var(--cp-font-sans);
+  font-size: 18px; font-weight: 600; letter-spacing: -0.02em;
+  margin: 8px 0 0;
+}
+.empty p {
+  font-size: 13px; color: var(--cp-fg-2);
+  max-width: 360px;
+}
+.empty .code-inline {
+  font-family: var(--cp-font-mono); font-size: 12px;
+  background: var(--cp-bg-inset); padding: 2px 6px; border-radius: 3px;
+  border: 1px solid var(--cp-border); color: var(--cp-accent-fg);
+  letter-spacing: -0.02em;
+}
 
-  .filter-btn:hover { border-color: var(--text-muted); color: var(--text); }
-  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(88, 166, 255, 0.1); }
+/* ===== Action bar ===== */
+.actionbar {
+  position: absolute; bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 16px;
+  background: var(--cp-bg-elev-3);
+  border: 1px solid var(--cp-border-strong);
+  border-radius: var(--cp-radius-md);
+  padding: 8px 8px 8px 16px;
+  box-shadow: var(--cp-shadow-lg);
+  z-index: 20;
+}
+.actionbar__count { font-size: 13px; color: var(--cp-fg-2); }
+.actionbar__count b { font-family: var(--cp-font-mono); color: var(--cp-fg); font-weight: 500; }
+.actionbar__btns { display: flex; gap: 6px; }
 
-  /* Violations list */
-  .violations-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
+/* ===== Toast ===== */
+.toast {
+  position: absolute; bottom: 84px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  display: flex; align-items: center; gap: 8px;
+  background: var(--cp-bg-elev-3); border: 1px solid var(--cp-border-strong);
+  padding: 10px 16px; border-radius: var(--cp-radius-md);
+  box-shadow: var(--cp-shadow-md);
+  font-size: 13px; color: var(--cp-fg);
+  opacity: 0; pointer-events: none;
+  transition: opacity 180ms, transform 180ms;
+  z-index: 30;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast__dot {
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--cp-success);
+  box-shadow: 0 0 8px var(--cp-success);
+}
 
-  .violations-header h2 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+/* ===== Run picker ===== */
+.runpicker { position: relative; }
+.runpicker__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border-strong);
+  border-radius: var(--cp-radius-sm);
+  font-family: var(--cp-font-sans);
+  cursor: pointer;
+  color: var(--cp-fg);
+  transition: border-color 120ms;
+}
+.runpicker__btn:hover { border-color: var(--cp-fg-3); }
+.runpicker__lbl {
+  font-family: var(--cp-font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--cp-fg-3);
+}
+.runpicker__val {
+  font-family: var(--cp-font-mono); font-size: 12.5px;
+  letter-spacing: -0.02em; color: var(--cp-fg);
+}
+.runpicker__tag {
+  font-family: var(--cp-font-mono); font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--cp-accent-soft); color: var(--cp-accent-fg);
+  padding: 2px 6px; border-radius: 999px;
+}
+.runpicker__caret { color: var(--cp-fg-3); margin-left: 2px; font-size: 10px; }
+.runpicker__menu {
+  position: absolute; right: 0; top: calc(100% + 6px);
+  min-width: 320px;
+  background: var(--cp-bg-elev-3);
+  border: 1px solid var(--cp-border-strong);
+  border-radius: var(--cp-radius-md);
+  box-shadow: var(--cp-shadow-lg);
+  padding: 6px; z-index: 40;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.runpicker__menu-hd {
+  font-family: var(--cp-font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--cp-fg-3);
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid var(--cp-border-muted);
+  margin-bottom: 4px;
+}
+.runpicker__item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: transparent; border: 0;
+  font-family: var(--cp-font-mono); font-size: 12px;
+  letter-spacing: -0.02em; color: var(--cp-fg-2);
+  border-radius: 4px;
+  cursor: pointer; text-align: left;
+  width: 100%;
+}
+.runpicker__item:hover { background: var(--cp-bg-elev-2); color: var(--cp-fg); }
+.runpicker__item.active { background: var(--cp-bg-elev-2); color: var(--cp-fg); }
+.runpicker__item .runpicker__when { color: var(--cp-fg); }
+.runpicker__trigger {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--cp-fg-3);
+  padding: 1px 6px; border: 1px solid var(--cp-border);
+  border-radius: 3px;
+}
+.runpicker__total {
+  font-variant-numeric: tabular-nums;
+  color: var(--cp-fg-3); min-width: 28px; text-align: right;
+}
+.runpicker__item.active .runpicker__total { color: var(--cp-fg); }
+.runpicker__item .runpicker__tag { font-size: 9px; padding: 1px 5px; }
 
-  .violation {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    transition: border-color 0.15s;
-  }
-
-  .violation:hover { border-color: var(--text-muted); }
-  .violation.selected { border-color: var(--accent); }
-
-  .violation-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    cursor: pointer;
-  }
-
-  .violation-header input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent);
-  }
-
-  .severity-badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .severity-badge.critical { background: rgba(248, 81, 73, 0.2); color: var(--critical); }
-  .severity-badge.high { background: rgba(240, 136, 62, 0.2); color: var(--high); }
-  .severity-badge.medium { background: rgba(210, 153, 34, 0.2); color: var(--medium); }
-  .severity-badge.low { background: rgba(88, 166, 255, 0.2); color: var(--low); }
-
-  .violation-file {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 13px;
-    color: var(--accent);
-    flex: 1;
-  }
-
-  .violation-standard {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  .violation-body {
-    padding: 0 16px 12px;
-  }
-
-  .violation-rule {
-    font-size: 13px;
-    margin-bottom: 4px;
-  }
-
-  .violation-evidence {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-
-  .violation-fix {
-    font-size: 13px;
-    color: var(--fixed);
-  }
-
-  /* Code snippet */
-  .code-snippet {
-    background: #0d1117;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-top: 8px;
-    overflow: hidden;
-    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
-    font-size: 12px;
-    line-height: 1.6;
-  }
-
-  .code-snippet .file-header {
-    background: var(--surface);
-    padding: 6px 12px;
-    font-size: 12px;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .code-line {
-    display: flex;
-    padding: 0 12px;
-  }
-
-  .code-line.highlighted {
-    background: rgba(248, 81, 73, 0.1);
-    border-left: 3px solid var(--critical);
-    padding-left: 9px;
-  }
-
-  .line-number {
-    color: var(--text-muted);
-    min-width: 40px;
-    text-align: right;
-    padding-right: 12px;
-    user-select: none;
-    opacity: 0.5;
-  }
-
-  .line-content {
-    white-space: pre;
-    overflow-x: auto;
-  }
-
-  /* Action bar */
-  .action-bar {
-    position: sticky;
-    bottom: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 12px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .action-bar .selected-count {
-    font-size: 14px;
-    color: var(--text-muted);
-  }
-
-  .action-bar .buttons { display: flex; gap: 8px; }
-
-  .btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .btn-primary:hover:not(:disabled) { opacity: 0.9; }
-  .btn-secondary { background: transparent; color: var(--text-muted); }
-  .btn-secondary:hover:not(:disabled) { color: var(--text); border-color: var(--text-muted); }
-
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    right: 24px;
-    background: var(--fixed);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-  }
-
-  .toast.show { opacity: 1; }
-
-  .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
-  }
-
-  .empty h2 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
-
-  /* Run selector */
-  .run-selector {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .run-selector select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 13px;
-  }
-
-  @media (max-width: 768px) {
-    .cards { grid-template-columns: repeat(2, 1fr); }
-    .violation-header { flex-wrap: wrap; }
-  }
+/* ===== Scrollbars ===== */
+.repos__list, .list { scrollbar-gutter: stable; }
 </style>
 </head>
-<body>
-<div class="container">
-  <header>
-    <h1>Codeplaybook Audit Dashboard</h1>
-    <div class="run-selector">
-      <span class="meta">Project:</span>
-      <select id="projectSelect"></select>
-      <span class="meta" style="margin-left:12px">Run:</span>
-      <select id="runSelect"></select>
-    </div>
-  </header>
+<body class="cp-grid-bg">
+<div id="root"></div>
 
-  <div id="content">
-    <div class="empty">
-      <h2>Loading...</h2>
-    </div>
-  </div>
-</div>
-
-<div class="action-bar" id="actionBar" style="display:none">
-  <span class="selected-count"><span id="selectedCount">0</span> violations selected</span>
-  <div class="buttons">
-    <button class="btn btn-secondary" id="dismissBtn" disabled>Dismiss Selected</button>
-    <button class="btn btn-primary" id="copyBtn" disabled>Copy Fix Prompt</button>
-  </div>
-</div>
-
-<div class="toast" id="toast">Copied to clipboard!</div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
 <script>
-const state = {
-  projects: [],
-  currentProject: null,
-  runs: [],
-  violations: [],
-  trends: [],
-  currentRunId: null,
-  selectedIds: new Set(),
-  activeFilter: null
-};
+// Data is fetched from /api/dashboard at runtime.
+window.CP_DATA = null;
 
-async function fetchJSON(url) {
-  const res = await fetch(url);
-  return res.json();
-}
-
-function projectParam() {
-  return state.currentProject ? `project=${encodeURIComponent(state.currentProject)}` : '';
-}
-
-async function init() {
-  // Load projects
-  state.projects = await fetchJSON('/api/projects');
-
-  const projectSelect = document.getElementById('projectSelect');
-  const allOpt = document.createElement('option');
-  allOpt.value = '';
-  allOpt.textContent = 'All Projects';
-  projectSelect.appendChild(allOpt);
-
-  state.projects.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p.project_name;
-    opt.textContent = `${p.project_name} (${p.total_runs} runs)`;
-    projectSelect.appendChild(opt);
+// Try to fetch live data from the API; fall back to mock if unavailable
+fetch('/api/dashboard')
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(data => { window.CP_DATA = data; })
+  .catch(() => { window.CP_DATA = { repos: [], violationsByRepo: {} }; })
+  .finally(() => {
+    // Signal that data is ready (App component checks this)
+    window.dispatchEvent(new Event('cp-data-ready'));
   });
+</script>
 
-  // Auto-select first project if there's only one
-  if (state.projects.length === 1) {
-    state.currentProject = state.projects[0].project_name;
-    projectSelect.value = state.currentProject;
-  }
-
-  projectSelect.addEventListener('change', () => {
-    state.currentProject = projectSelect.value || null;
-    loadProject();
-  });
-
-  await loadProject();
+<script type="text/babel">
+// ===== Severity badge =====
+function Badge({ severity }) {
+  const sev = severity.toLowerCase();
+  return (
+    <span className={`badge badge--${sev}`}>
+      <span className="badge__dot" />
+      {severity}
+    </span>
+  );
 }
 
-async function loadProject() {
-  const pp = projectParam();
-  state.runs = await fetchJSON(`/api/runs?${pp}`);
-  state.trends = await fetchJSON(`/api/trends?limit=10&${pp}`);
-
-  if (state.runs.length === 0) {
-    document.getElementById('content').innerHTML = `
-      <div class="empty">
-        <h2>No audit runs yet</h2>
-        <p>Run /codeplaybook-audit in your coding agent to generate audit data.</p>
-      </div>`;
-    document.getElementById('actionBar').style.display = 'none';
-    // Clear run selector
-    const runSelect = document.getElementById('runSelect');
-    runSelect.innerHTML = '';
-    return;
-  }
-
-  // Populate run selector
-  const runSelect = document.getElementById('runSelect');
-  runSelect.innerHTML = '';
-  state.runs.forEach(run => {
-    const opt = document.createElement('option');
-    opt.value = run.id;
-    const date = new Date(run.run_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    const label = run.project_name && !state.currentProject ? `${run.project_name} — ${date}` : date;
-    opt.textContent = `${label} (${run.total_violations} violations)`;
-    runSelect.appendChild(opt);
-  });
-
-  runSelect.onchange = () => loadRun(parseInt(runSelect.value));
-
-  // Load latest run
-  await loadRun(state.runs[0].id);
+// ===== Severity bar =====
+function SevBar({ repo }) {
+  const r = repo.runs[0];
+  const total = r.critical + r.high + r.medium + r.low;
+  if (total === 0) return <div className="repo__sevbar" />;
+  const seg = (n, cls) => n > 0 ? <span key={cls} className={cls} style={{ flex: n }} /> : null;
+  return (
+    <div className="repo__sevbar">
+      {seg(r.critical, "crit")}
+      {seg(r.high, "high")}
+      {seg(r.medium, "med")}
+      {seg(r.low, "low")}
+    </div>
+  );
 }
 
-async function loadRun(runId) {
-  state.currentRunId = runId;
-  state.selectedIds.clear();
-  state.violations = await fetchJSON(`/api/violations?run_id=${runId}`);
-  render();
-}
-
-function render() {
-  const v = state.violations;
-  const counts = { Critical: 0, High: 0, Medium: 0, Low: 0 };
-  v.forEach(vi => { counts[vi.severity] = (counts[vi.severity] || 0) + 1; });
-  const total = v.length;
-
-  let filtered = v;
-  if (state.activeFilter) {
-    filtered = v.filter(vi => vi.severity === state.activeFilter);
-  }
-
-  document.getElementById('content').innerHTML = `
-    <div class="cards">
-      <div class="card total"><div class="count">${total}</div><div class="label">Total</div></div>
-      <div class="card critical"><div class="count">${counts.Critical}</div><div class="label">Critical</div></div>
-      <div class="card high"><div class="count">${counts.High}</div><div class="label">High</div></div>
-      <div class="card medium"><div class="count">${counts.Medium}</div><div class="label">Medium</div></div>
-      <div class="card low"><div class="count">${counts.Low}</div><div class="label">Low</div></div>
-    </div>
-
-    ${renderChart()}
-
-    <div class="violations-header">
-      <h2>Violations (${filtered.length})</h2>
-    </div>
-
-    <div class="filters">
-      <button class="filter-btn ${!state.activeFilter ? 'active' : ''}" onclick="setFilter(null)">All</button>
-      <button class="filter-btn ${state.activeFilter === 'Critical' ? 'active' : ''}" onclick="setFilter('Critical')">Critical (${counts.Critical})</button>
-      <button class="filter-btn ${state.activeFilter === 'High' ? 'active' : ''}" onclick="setFilter('High')">High (${counts.High})</button>
-      <button class="filter-btn ${state.activeFilter === 'Medium' ? 'active' : ''}" onclick="setFilter('Medium')">Medium (${counts.Medium})</button>
-      <button class="filter-btn ${state.activeFilter === 'Low' ? 'active' : ''}" onclick="setFilter('Low')">Low (${counts.Low})</button>
-    </div>
-
-    <div id="violationsList">
-      ${filtered.map(vi => renderViolation(vi)).join('')}
-    </div>
-  `;
-
-  document.getElementById('actionBar').style.display = total > 0 ? 'flex' : 'none';
-  updateActionBar();
-}
-
-function renderViolation(vi) {
-  const checked = state.selectedIds.has(vi.id) ? 'checked' : '';
-  const selected = state.selectedIds.has(vi.id) ? 'selected' : '';
-  const severity = vi.severity.toLowerCase();
-
-  let snippetHtml = '';
-  if (vi.context_snippet) {
-    try {
-      const ctx = JSON.parse(vi.context_snippet);
-      const highlightSet = new Set(ctx.highlight_lines || []);
-      snippetHtml = `
-        <div class="code-snippet">
-          <div class="file-header">${escapeHtml(vi.file)}</div>
-          ${ctx.lines.map((line, i) => {
-            const lineNum = ctx.start_line + i;
-            const isHighlighted = highlightSet.has(lineNum);
-            return `<div class="code-line ${isHighlighted ? 'highlighted' : ''}">
-              <span class="line-number">${lineNum}</span>
-              <span class="line-content">${escapeHtml(line)}</span>
-            </div>`;
-          }).join('')}
-        </div>`;
-    } catch (_) {}
-  }
-
-  return `
-    <div class="violation ${selected}" id="v-${vi.id}">
-      <div class="violation-header" onclick="toggleSelect(${vi.id})">
-        <input type="checkbox" ${checked} onclick="event.stopPropagation(); toggleSelect(${vi.id})">
-        <span class="severity-badge ${severity}">${vi.severity}</span>
-        <span class="violation-file">${escapeHtml(vi.file)}:${vi.line || '?'}</span>
-        <span class="violation-standard">${escapeHtml(vi.standard_name)}</span>
+// ===== Repo row =====
+function RepoRow({ repo, active, onClick }) {
+  const r = repo.runs[0];
+  return (
+    <div className={`repo ${active ? "active" : ""}`} onClick={onClick}>
+      <div className="repo__icon" aria-hidden="true">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+          <path d="M2 2.5A1.5 1.5 0 0 1 3.5 1h9A1.5 1.5 0 0 1 14 2.5V13a1 1 0 0 1-1 1H4a2 2 0 0 0-2 2V2.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+          <path d="M4 12h9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+        </svg>
       </div>
-      <div class="violation-body">
-        <div class="violation-rule">Rule: ${escapeHtml(vi.rule)}</div>
-        <div class="violation-evidence">Found: ${escapeHtml(vi.evidence)}</div>
-        ${vi.suggested_fix ? `<div class="violation-fix">Fix: ${escapeHtml(vi.suggested_fix)}</div>` : ''}
-        ${snippetHtml}
+      <div className="repo__main">
+        <div className="repo__name">{repo.name}</div>
+        <div className="repo__sub"><span>{r.at}</span></div>
       </div>
-    </div>`;
-}
-
-function renderChart() {
-  if (state.trends.length < 2) return '';
-
-  const maxVal = Math.max(...state.trends.map(t => t.total), 1);
-  const w = 100;
-  const h = 200;
-  const padding = 40;
-  const chartW = w - padding;
-  const chartH = h - 30;
-  const step = state.trends.length > 1 ? chartW / (state.trends.length - 1) : 0;
-
-  function makeLine(key, color) {
-    const points = state.trends.map((t, i) => {
-      const x = padding + i * step;
-      const y = chartH - (t[key] / maxVal * (chartH - 10));
-      return `${x},${y}`;
-    }).join(' ');
-    return `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
-  }
-
-  const svg = `
-    <svg viewBox="0 0 ${w} ${h}" class="chart-container" preserveAspectRatio="none">
-      ${makeLine('Critical', 'var(--critical)')}
-      ${makeLine('High', 'var(--high)')}
-      ${makeLine('Medium', 'var(--medium)')}
-      ${makeLine('Low', 'var(--low)')}
-    </svg>`;
-
-  return `
-    <div class="chart-section">
-      <h2>Trend (last ${state.trends.length} audits)</h2>
-      <div style="display:flex;gap:16px;margin-bottom:8px;font-size:12px;">
-        <span style="color:var(--critical)">&#9679; Critical</span>
-        <span style="color:var(--high)">&#9679; High</span>
-        <span style="color:var(--medium)">&#9679; Medium</span>
-        <span style="color:var(--low)">&#9679; Low</span>
+      <div className="repo__rhs">
+        <div className={`repo__count ${r.total === 0 ? "zero" : ""}`}>{r.total}</div>
+        <SevBar repo={repo} />
       </div>
-      ${svg}
-    </div>`;
+    </div>
+  );
 }
 
-function setFilter(severity) {
-  state.activeFilter = severity;
-  render();
-}
+// ===== Repo sidebar =====
+function RepoSidebar({ repos, activeId, onSelect }) {
+  const [query, setQuery] = React.useState("");
+  const [sort, setSort] = React.useState("violations");
 
-function toggleSelect(id) {
-  if (state.selectedIds.has(id)) {
-    state.selectedIds.delete(id);
-  } else {
-    state.selectedIds.add(id);
-  }
-  const el = document.getElementById(`v-${id}`);
-  if (el) el.classList.toggle('selected', state.selectedIds.has(id));
-  const cb = el?.querySelector('input[type="checkbox"]');
-  if (cb) cb.checked = state.selectedIds.has(id);
-  updateActionBar();
-}
-
-function updateActionBar() {
-  const count = state.selectedIds.size;
-  document.getElementById('selectedCount').textContent = count;
-  document.getElementById('copyBtn').disabled = count === 0;
-  document.getElementById('dismissBtn').disabled = count === 0;
-}
-
-document.getElementById('copyBtn').addEventListener('click', () => {
-  const selected = state.violations.filter(v => state.selectedIds.has(v.id));
-  const prompt = buildFixPrompt(selected);
-  navigator.clipboard.writeText(prompt).then(() => {
-    showToast('Copied to clipboard!');
+  const filtered = repos.filter(r =>
+    r.name.toLowerCase().includes(query.toLowerCase())
+  );
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === "violations") return b.runs[0].total - a.runs[0].total;
+    if (sort === "name") return a.name.localeCompare(b.name);
+    if (sort === "recent") return (b.runs[0].ts || "").localeCompare(a.runs[0].ts || "");
+    return 0;
   });
-});
 
-document.getElementById('dismissBtn').addEventListener('click', async () => {
-  const ids = [...state.selectedIds];
-  for (const id of ids) {
-    await fetch(`/api/violations/${id}/status`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'dismissed' })
+  return (
+    <aside className="repos">
+      <div className="repos__hd">
+        <div className="repos__title">
+          <h2>Repositories <span className="count">{repos.length}</span></h2>
+        </div>
+        <div className="repos__filter">
+          <span style={{color:"var(--cp-fg-3)"}}>/</span>
+          <input type="text" placeholder={"Filter repos\u2026"} value={query} onChange={e => setQuery(e.target.value)} />
+          {query && <span className="x" onClick={() => setQuery("")}>{"\u00d7"}</span>}
+        </div>
+        <div className="repos__sort">
+          <span style={{padding:"3px 0"}}>SORT</span>
+          <button className={sort === "violations" ? "active" : ""} onClick={() => setSort("violations")}>violations</button>
+          <button className={sort === "name" ? "active" : ""} onClick={() => setSort("name")}>name</button>
+          <button className={sort === "recent" ? "active" : ""} onClick={() => setSort("recent")}>recent</button>
+        </div>
+      </div>
+      <div className="repos__list">
+        {sorted.map(r => (
+          <RepoRow key={r.id} repo={r} active={activeId === r.id} onClick={() => onSelect(r.id)} />
+        ))}
+        {filtered.length === 0 && (
+          <div style={{padding:"32px 16px",textAlign:"center",color:"var(--cp-fg-3)",fontSize:"12px",fontFamily:"var(--cp-font-mono)"}}>
+            No repos match "{query}"
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+// ===== Code snippet =====
+function CodeSnippet({ snippet }) {
+  if (!snippet) return null;
+  const hl = new Set(snippet.highlight || []);
+  const ext = snippet.path.split(".").pop() || "";
+  return (
+    <div className="code">
+      <div className="code__hd">
+        <span>{snippet.path}</span>
+        <span className="meta">{ext}</span>
+      </div>
+      <div className="code__body">
+        {snippet.lines.map((line, i) => {
+          const ln = snippet.start + i;
+          return (
+            <div key={i} className={`code__ln ${hl.has(ln) ? "hl" : ""}`}>
+              <span className="code__nu">{ln}</span>
+              <span className="code__line">{line || "\u00A0"}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ===== Violation row =====
+function Violation({ v, selected, expanded, onToggleSelect, onToggleExpand }) {
+  return (
+    <article className={`v ${selected ? "selected" : ""} ${expanded ? "" : "collapsed"}`}>
+      <header className="v__hd" onClick={onToggleExpand}>
+        <input
+          type="checkbox" className="v__cb" checked={selected}
+          onChange={(e) => { e.stopPropagation(); onToggleSelect(); }}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <Badge severity={v.severity} />
+        <div className="v__head-main">
+          <div className="v__head-rule">{v.rule}</div>
+          <div className="v__head-meta">
+            <span className="v__file">{v.file}<span className="ln">:{v.line}</span></span>
+            <span className="v__dot">{"\u00b7"}</span>
+            <span className="v__std">{v.standard}</span>
+          </div>
+        </div>
+        <span className="v__chevron">{"\u25be"}</span>
+      </header>
+      <div className="v__body">
+        <div className="v__found"><span className="v__lead">Found</span>{v.found}</div>
+        <div className="v__fix"><span className="v__lead">Fix</span>{v.fix}</div>
+        <CodeSnippet snippet={v.snippet} />
+      </div>
+    </article>
+  );
+}
+
+// ===== Stats =====
+function StatCards({ run }) {
+  const items = [
+    { key: "total",    label: "Total",    value: run.total,    color: "var(--cp-fg)" },
+    { key: "critical", label: "Critical", value: run.critical, color: "var(--cp-critical)" },
+    { key: "high",     label: "High",     value: run.high,     color: "var(--cp-high)" },
+    { key: "medium",   label: "Medium",   value: run.medium,   color: "var(--cp-medium)" },
+    { key: "low",      label: "Low",      value: run.low,      color: "var(--cp-low)" },
+  ];
+  return (
+    <section className="stats">
+      {items.map(it => (
+        <div key={it.key} className="stat">
+          <div className="stat__lbl">{it.label}</div>
+          <div className="stat__num" style={{ color: it.color }}>{it.value}</div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+// ===== Filter chips =====
+function FilterChips({ counts, active, onChange }) {
+  const chips = [
+    { id: null,       label: "All",      count: counts.total },
+    { id: "Critical", label: "Critical", count: counts.critical },
+    { id: "High",     label: "High",     count: counts.high },
+    { id: "Medium",   label: "Medium",   count: counts.medium },
+    { id: "Low",      label: "Low",      count: counts.low },
+  ];
+  return (
+    <div className="toolbar__lhs">
+      {chips.map(c => (
+        <button key={c.id || "all"} className={`chip ${active === c.id ? "active" : ""}`} onClick={() => onChange(c.id)}>
+          {c.label} <span className="chip__count">{c.count}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ===== Empty state =====
+function EmptyState({ repo }) {
+  return (
+    <div className="empty">
+      <div className="empty__icon">{"\u2713"}</div>
+      <h3>No violations.</h3>
+      <p>
+        <b style={{color:"var(--cp-fg)",fontWeight:500}}>{repo.name}</b> is fully aligned with your standards as of {repo.runs[0].at}.
+      </p>
+      <p style={{marginTop:8}}>
+        Run <span className="code-inline">/codeplaybook-audit</span> in your agent for a fresh scan.
+      </p>
+    </div>
+  );
+}
+
+// ===== Action bar =====
+function ActionBar({ count, onCopy, onDismiss, onClear }) {
+  if (count === 0) return null;
+  return (
+    <div className="actionbar">
+      <span className="actionbar__count"><b>{count}</b> selected</span>
+      <div className="actionbar__btns">
+        <button className="btn btn--ghost" onClick={onClear}>Clear</button>
+        <button className="btn btn--ghost" onClick={onDismiss}>Dismiss</button>
+        <button className="btn btn--primary" onClick={onCopy}>Copy fix prompt{count > 1 ? "s" : ""}</button>
+      </div>
+    </div>
+  );
+}
+
+function Toast({ message, show }) {
+  return (
+    <div className={`toast ${show ? "show" : ""}`}>
+      <span className="toast__dot" />
+      {message}
+    </div>
+  );
+}
+
+// ===== Run picker =====
+function RunPicker({ runs, activeRunId, onPick }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+  const active = runs.find(r => r.id === activeRunId) || runs[0];
+  const isLatest = runs[0].id === active.id;
+
+  React.useEffect(() => {
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  return (
+    <div className="runpicker" ref={ref}>
+      <button className="runpicker__btn" onClick={() => setOpen(o => !o)}>
+        <span className="runpicker__lbl">Run</span>
+        <span className="runpicker__val">{active.at}</span>
+        {isLatest && <span className="runpicker__tag">latest</span>}
+        <span className="runpicker__caret">{"\u25be"}</span>
+      </button>
+      {open && (
+        <div className="runpicker__menu">
+          <div className="runpicker__menu-hd">Audit history {"\u00b7"} {runs.length}</div>
+          {runs.map((r, i) => (
+            <button key={r.id} className={`runpicker__item ${r.id === active.id ? "active" : ""}`}
+              onClick={() => { onPick(r.id); setOpen(false); }}>
+              <span className="runpicker__when">{r.at}</span>
+              <span className="runpicker__trigger">{r.trigger}</span>
+              <span className="runpicker__total">{r.total}</span>
+              {i === 0 && <span className="runpicker__tag">latest</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ===== List content helper =====
+function ListContent({ counts, isLatest, run, repo, filtered, selected, expanded, toggleSelect, toggleExpand }) {
+  if (counts.total === 0) {
+    return <EmptyState repo={repo} />;
+  }
+  if (!isLatest) {
+    return (
+      <div className="empty">
+        <h3>Historical run</h3>
+        <p>This view shows the violation summary for {run.at}. Select the latest run to see per-violation details and fix prompts.</p>
+      </div>
+    );
+  }
+  if (filtered.length === 0) {
+    return (
+      <div className="empty">
+        <h3>No violations match this filter.</h3>
+        <p>Try a different severity or clear the filter.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="list__inner">
+      {filtered.map(v => (
+        <Violation key={v.id} v={v} selected={selected.has(v.id)} expanded={expanded.has(v.id)}
+          onToggleSelect={() => toggleSelect(v.id)} onToggleExpand={() => toggleExpand(v.id)} />
+      ))}
+    </div>
+  );
+}
+
+// ===== Main pane =====
+function ViolationsPane({ repo, violations }) {
+  const [filter, setFilter] = React.useState(null);
+  const [selected, setSelected] = React.useState(new Set());
+  const [expanded, setExpanded] = React.useState(new Set());
+  const [toast, setToast] = React.useState({ show: false, msg: "" });
+  const [runId, setRunId] = React.useState(repo.runs[0].id);
+
+  React.useEffect(() => {
+    setSelected(new Set());
+    setFilter(null);
+    setExpanded(new Set());
+    setRunId(repo.runs[0].id);
+  }, [repo.id]);
+
+  const run = repo.runs.find(r => r.id === runId) || repo.runs[0];
+  const isLatest = repo.runs[0].id === run.id;
+
+  const counts = isLatest ? violations.reduce((acc, v) => {
+    acc.total++;
+    const sev = v.severity.toLowerCase();
+    if (sev in acc) acc[sev]++;
+    return acc;
+  }, { total: 0, critical: 0, high: 0, medium: 0, low: 0 }) : {
+    total: run.total, critical: run.critical, high: run.high, medium: run.medium, low: run.low,
+  };
+  const filtered = isLatest
+    ? (filter ? violations.filter(v => v.severity === filter) : violations)
+    : [];
+
+  const toggleInSet = (setter, id) => {
+    setter(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
     });
-  }
-  state.selectedIds.clear();
-  await loadRun(state.currentRunId);
-  showToast(`Dismissed ${ids.length} violations`);
-});
+  };
+  const toggleSelect = (id) => toggleInSet(setSelected, id);
+  const toggleExpand = (id) => toggleInSet(setExpanded, id);
 
-function buildFixPrompt(violations) {
-  let prompt = 'Fix these violations in my codebase:\n\n';
-  violations.forEach((v, i) => {
-    prompt += `${i + 1}. [${v.severity}] ${v.file}:${v.line || '?'}\n`;
-    prompt += `   Standard: ${v.standard_name}\n`;
-    prompt += `   Violation: ${v.evidence}\n`;
-    prompt += `   Rule: ${v.rule}\n`;
-    if (v.suggested_fix) {
-      prompt += `   Suggested fix: ${v.suggested_fix}\n`;
+  const showToast = (msg) => {
+    setToast({ show: true, msg });
+    setTimeout(() => setToast({ show: false, msg: "" }), 2000);
+  };
+  const onCopy = () => {
+    const fixes = violations.filter(v => selected.has(v.id)).map(v => v.fix).filter(Boolean).join("\n\n");
+    if (!fixes) return;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fixes).then(() => {
+        showToast(`Copied ${selected.size} fix prompt${selected.size === 1 ? "" : "s"}`);
+      });
+    } else {
+      showToast("Clipboard not available");
     }
-    prompt += '\n';
-  });
-  prompt += 'Reference standards: .codeplaybook/standards/\n';
-  prompt += 'Apply fixes one at a time, verifying each before moving to the next.\n';
-  return prompt;
+  };
+  const onDismiss = () => {
+    showToast(`Dismissed ${selected.size} violation${selected.size === 1 ? "" : "s"}`);
+    setSelected(new Set());
+  };
+  const onClear = () => setSelected(new Set());
+
+  return (
+    <main className="pane">
+      <div className="pane__hd">
+        <div className="pane__top">
+          <div className="pane__lhs">
+            <div className="pane__crumb">
+              <a href="#">Repositories</a>
+              <span style={{color:"var(--cp-fg-4)"}}>/</span>
+              <span className="accent">{repo.name}</span>
+              <span style={{color:"var(--cp-fg-4)"}}>{"\u00b7"}</span>
+              <span>Last run {repo.runs[0].at}</span>
+            </div>
+            <h1 className="pane__title">{repo.name}</h1>
+            <p className="pane__sub">
+              {counts.total === 0
+                ? "Codebase is aligned with all standards."
+                : <>{counts.total} open finding{counts.total === 1 ? "" : "s"} across {Object.values(counts).slice(1).filter(n => n > 0).length} severity tier{Object.values(counts).slice(1).filter(n => n > 0).length === 1 ? "" : "s"}.</>}
+              {" \u00b7 Run "}<span className="code-inline">/codeplaybook-audit</span>{" for a fresh scan."}
+            </p>
+          </div>
+          <div className="pane__rhs">
+            <RunPicker runs={repo.runs} activeRunId={runId} onPick={setRunId} />
+          </div>
+        </div>
+        <StatCards run={run} />
+      </div>
+
+      <div className="toolbar">
+        <FilterChips counts={counts} active={filter} onChange={setFilter} />
+        <div className="toolbar__rhs">
+          <span className="toolbar__sort">
+            {isLatest
+              ? <>{filtered.length} of {counts.total} {"\u00b7"} sort by severity</>
+              : <>Showing summary for {run.at} {"\u00b7"} select latest run for full details</>}
+          </span>
+        </div>
+      </div>
+
+      <div className="list">
+        <ListContent
+          counts={counts} isLatest={isLatest} run={run} repo={repo}
+          filtered={filtered} selected={selected} expanded={expanded}
+          toggleSelect={toggleSelect} toggleExpand={toggleExpand}
+        />
+      </div>
+
+      <ActionBar count={selected.size} onCopy={onCopy} onDismiss={onDismiss} onClear={onClear} />
+      <Toast message={toast.msg} show={toast.show} />
+    </main>
+  );
 }
 
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+// ===== App =====
+function App() {
+  const [data, setData] = React.useState(window.CP_DATA);
+  const [activeId, setActiveId] = React.useState(null);
+
+  React.useEffect(() => {
+    if (window.CP_DATA) {
+      setData(window.CP_DATA);
+      if (!activeId && window.CP_DATA.repos.length) setActiveId(window.CP_DATA.repos[0].id);
+    } else {
+      const onReady = () => {
+        setData(window.CP_DATA);
+        if (window.CP_DATA.repos.length) setActiveId(window.CP_DATA.repos[0].id);
+      };
+      window.addEventListener('cp-data-ready', onReady);
+      return () => window.removeEventListener('cp-data-ready', onReady);
+    }
+  }, []);
+
+  if (!data || !data.repos.length) {
+    return (
+      <div className="app">
+        <div className="empty" style={{height:"100vh"}}>
+          <div className="empty__icon">
+            {data ? "\u2713" : "\u22ef"}
+          </div>
+          <h3>
+            {data ? "No audit data yet." : "Loading\u2026"}
+          </h3>
+          {data && (
+            <p>
+              Run <span className="code-inline">codeplaybook audit</span> to generate your first report.
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const repo = data.repos.find(r => r.id === activeId) || data.repos[0];
+  const violations = data.violationsByRepo[activeId] || [];
+
+  return (
+    <div className="app">
+      <div className="body">
+        <RepoSidebar repos={data.repos} activeId={activeId} onSelect={setActiveId} />
+        <ViolationsPane repo={repo} violations={violations} />
+      </div>
+    </div>
+  );
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-init();
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>

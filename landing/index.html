@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>codeplaybook · standards your agents will actually follow</title>
+<link rel="stylesheet" href="design-system.css">
+<style>
+html, body { height: 100%; }
+
+body {
+  background-attachment: fixed;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,92,40,0.12), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 90%, rgba(255,92,40,0.06), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; }
+
+/* ============ Nav ============ */
+nav.nav {
+  position: sticky; top: 16px; z-index: 10;
+  margin: 16px auto 0; max-width: 1100px; padding: 0 24px;
+}
+.nav__inner {
+  display: flex; align-items: center; gap: 32px;
+  background: rgba(17,17,19,0.72);
+  backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.brand { display: flex; align-items: center; gap: 9px; }
+.mark {
+  width: 24px; height: 24px;
+  background: var(--cp-accent); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+}
+.word { font-size: 15px; font-weight: 600; letter-spacing: -0.025em; color: var(--cp-fg); }
+.nav__links { display: flex; gap: 18px; flex: 1; }
+.nav__links a { font-size: 13px; color: var(--cp-fg-3); border: none; transition: color 150ms; }
+.nav__links a:hover { color: var(--cp-fg); }
+.nav__right { display: flex; align-items: center; gap: 10px; }
+
+/* ============ Buttons (landing-specific) ============ */
+.btn--secondary {
+  background: var(--cp-bg-elev-1); color: var(--cp-fg);
+  border-color: var(--cp-border-strong);
+  font-family: var(--cp-font-mono); font-size: 13px; letter-spacing: -0.02em;
+}
+.btn--secondary:hover { background: var(--cp-bg-elev-2); }
+.btn--sm { padding: 7px 13px; font-size: 13px; }
+.btn__kbd {
+  font-family: var(--cp-font-mono); font-size: 11px;
+  padding: 1px 5px; border: 1px solid var(--cp-border); border-radius: 3px;
+  color: var(--cp-fg-3);
+}
+
+/* ============ Hero ============ */
+.hero {
+  max-width: 1100px; margin: 0 auto;
+  padding: 96px 24px 56px;
+  text-align: center;
+}
+.hero h1 {
+  font-family: var(--cp-font-sans);
+  font-size: clamp(44px, 6.4vw, 84px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  color: var(--cp-fg);
+  margin: 0 auto 28px;
+  max-width: 940px;
+  text-wrap: balance;
+}
+.hero h1 .accent { color: var(--cp-accent); }
+.hero h1 .mono {
+  font-family: var(--cp-font-mono);
+  font-weight: 500;
+  letter-spacing: -0.06em;
+}
+.hero p {
+  font-size: 18px; line-height: 1.55; color: var(--cp-fg-2);
+  max-width: 640px; margin: 0 auto 36px;
+}
+.hero__cta { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.hero__meta {
+  margin-top: 28px;
+  font-family: var(--cp-font-mono);
+  font-size: 12px; color: var(--cp-fg-3);
+  letter-spacing: -0.02em;
+  display: inline-flex; gap: 18px; align-items: center;
+  flex-wrap: wrap; justify-content: center;
+}
+.hero__meta span.dot { width: 4px; height: 4px; border-radius: 999px; background: var(--cp-fg-4); }
+.hero__meta b { color: var(--cp-fg); font-weight: 500; }
+
+/* ============ Agent strip ============ */
+.agents {
+  max-width: 1100px; margin: 56px auto 0;
+  padding: 0 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+}
+.agents__lbl {
+  font-family: var(--cp-font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--cp-fg-3);
+}
+.agents__row {
+  display: flex; gap: 28px; align-items: center; flex-wrap: wrap; justify-content: center;
+}
+.agents__row span {
+  font-family: var(--cp-font-mono); font-size: 13px;
+  color: var(--cp-fg-2); letter-spacing: -0.02em; opacity: 0.9;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.agents__row span::before {
+  content: "\25CF"; color: var(--cp-fg-3); font-size: 8px;
+}
+
+/* ============ Product preview ============ */
+.preview {
+  max-width: 1080px; margin: 64px auto 0;
+  padding: 0 24px 80px;
+}
+.preview__frame {
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 50px 100px -30px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,92,40,0.06);
+}
+.preview__hd {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--cp-border);
+  background: var(--cp-bg-elev-2);
+}
+.preview__dots { display: flex; gap: 6px; }
+.preview__dots span { width: 10px; height: 10px; border-radius: 999px; background: var(--cp-border-strong); }
+.preview__title {
+  font-family: var(--cp-font-mono); font-size: 12px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+  flex: 1; text-align: center;
+}
+.preview__body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 460px;
+  position: relative;
+}
+
+/* sidebar */
+.pv-side {
+  background: var(--cp-bg-elev-2);
+  border-right: 1px solid var(--cp-border);
+  padding: 14px 0 0;
+}
+.pv-side__lbl {
+  font-family: var(--cp-font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--cp-fg-3); padding: 0 16px 10px;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.pv-side__lbl .n { color: var(--cp-fg-4); }
+.pv-repo {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 9px 16px 9px 13px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid var(--cp-border-muted);
+  font-family: var(--cp-font-mono); font-size: 12.5px;
+  color: var(--cp-fg-2); letter-spacing: -0.02em;
+}
+.pv-repo__ico {
+  width: 22px; height: 22px;
+  border-radius: 4px;
+  background: var(--cp-bg-inset);
+  border: 1px solid var(--cp-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cp-fg-3);
+}
+.pv-repo__nm { color: var(--cp-fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-repo__ct { font-size: 12px; color: var(--cp-fg-3); }
+.pv-repo__ct.zero { color: var(--cp-fg-4); }
+.pv-repo.active {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--cp-accent) 14%, transparent) 0%, var(--cp-bg-elev-2) 60%);
+  border-left-color: var(--cp-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cp-accent) 24%, transparent);
+}
+.pv-repo.active .pv-repo__ico {
+  background: color-mix(in oklab, var(--cp-accent) 18%, var(--cp-bg-inset));
+  border-color: color-mix(in oklab, var(--cp-accent) 45%, var(--cp-border));
+  color: var(--cp-accent);
+}
+.pv-repo.active .pv-repo__nm,
+.pv-repo.active .pv-repo__ct { color: var(--cp-fg); }
+
+/* main pane */
+.pv-main {
+  padding: 20px 22px 80px;
+  display: flex; flex-direction: column; gap: 12px;
+  background:
+    radial-gradient(ellipse 600px 240px at 50% 100%, rgba(255,92,40,0.05), transparent 70%),
+    var(--cp-bg-elev-1);
+}
+.pv-main__crumb {
+  font-family: var(--cp-font-mono); font-size: 11px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+  display: flex; gap: 6px; align-items: center;
+}
+.pv-main__crumb .accent { color: var(--cp-accent-fg); }
+.pv-main h3 {
+  font-family: var(--cp-font-sans); color: var(--cp-fg);
+  font-size: 22px; font-weight: 600; letter-spacing: -0.03em;
+  margin: 2px 0 0;
+}
+.pv-main__sub {
+  font-size: 13px; color: var(--cp-fg-3); letter-spacing: -0.01em;
+  margin: 2px 0 8px;
+}
+.pv-main__sub .code { font-family: var(--cp-font-mono); font-size: 11.5px; background: var(--cp-bg-inset); padding: 1px 5px; border-radius: 3px; color: var(--cp-fg-2); }
+
+/* violation card */
+.pv-v {
+  display: grid; grid-template-columns: auto auto 1fr auto;
+  column-gap: 12px; align-items: center;
+  padding: 12px 14px;
+  background: var(--cp-bg-elev-2);
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+}
+.pv-v.selected { border-color: var(--cp-accent); box-shadow: 0 0 0 1px color-mix(in oklab, var(--cp-accent) 30%, transparent); }
+.pv-v__cb {
+  width: 16px; height: 16px; border-radius: 3px;
+  border: 1.5px solid var(--cp-border-strong);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+}
+.pv-v__cb.checked { background: var(--cp-accent); border-color: var(--cp-accent); }
+.pv-badge2 {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 8px; border-radius: 999px;
+  font-family: var(--cp-font-mono); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.pv-badge2.high { background: var(--cp-high-bg); color: var(--cp-high-fg); }
+.pv-badge2.high::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: var(--cp-high); }
+.pv-badge2.med { background: var(--cp-medium-bg); color: var(--cp-medium-fg); }
+.pv-badge2.med::before { content: ""; width: 5px; height: 5px; border-radius: 999px; background: var(--cp-medium); }
+.pv-v__main { min-width: 0; }
+.pv-v__rule { font-size: 13.5px; color: var(--cp-fg); letter-spacing: -0.02em; margin-bottom: 3px; }
+.pv-v__meta { font-family: var(--cp-font-mono); font-size: 11px; color: var(--cp-fg-3); letter-spacing: -0.02em; display: flex; gap: 8px; }
+.pv-v__meta .file { color: var(--cp-fg-2); }
+.pv-v__meta .ln { color: var(--cp-fg-4); }
+.pv-v__chev { color: var(--cp-fg-4); font-size: 12px; }
+
+/* floating action bar */
+.pv-actionbar {
+  position: absolute;
+  left: 50%; bottom: 18px;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 4px;
+  padding: 6px 6px 6px 14px;
+  background: var(--cp-bg-elev-3);
+  border: 1px solid var(--cp-border-strong);
+  border-radius: 999px;
+  box-shadow: 0 18px 40px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,92,40,0.08);
+  font-family: var(--cp-font-mono); font-size: 12px;
+  letter-spacing: -0.02em;
+  z-index: 2;
+}
+.pv-actionbar__count { color: var(--cp-fg); }
+.pv-actionbar__count b { color: var(--cp-accent-fg); font-weight: 500; }
+.pv-actionbar__sep { width: 1px; height: 18px; background: var(--cp-border); margin: 0 4px; }
+.pv-actionbar__btn {
+  background: transparent; border: 0;
+  color: var(--cp-fg-2); font: inherit;
+  padding: 6px 10px; border-radius: 999px;
+  cursor: pointer;
+}
+.pv-actionbar__btn:hover { background: var(--cp-bg-elev-2); color: var(--cp-fg); }
+.pv-actionbar__cta {
+  background: var(--cp-accent); color: #1a0e08;
+  border: 0; font: inherit; font-weight: 500;
+  padding: 7px 14px; border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.pv-actionbar__cta:hover { filter: brightness(1.08); }
+.pv-actionbar__kbd {
+  font-family: var(--cp-font-mono); font-size: 10.5px;
+  color: rgba(26,14,8,0.65);
+  border: 1px solid rgba(26,14,8,0.25);
+  border-radius: 3px; padding: 1px 4px;
+  margin-left: 2px;
+}
+
+/* ============ Sections ============ */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 96px 24px;
+}
+.section__hd { max-width: 720px; margin-bottom: 44px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 4px 10px 4px 6px;
+  border: 1px solid var(--cp-border-strong);
+  background: var(--cp-bg-elev-1);
+  border-radius: 999px;
+  font-family: var(--cp-font-mono); font-size: 11px;
+  letter-spacing: -0.02em; color: var(--cp-fg-2);
+  margin-bottom: 18px;
+}
+.eyebrow .pill {
+  background: var(--cp-accent-soft); color: var(--cp-accent-fg);
+  padding: 1px 7px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: 0.04em; font-size: 9.5px;
+}
+.section__hd h2 {
+  font-size: clamp(32px, 4.2vw, 52px); font-weight: 600;
+  letter-spacing: -0.04em; line-height: 1.02;
+  color: var(--cp-fg); margin: 0 0 16px;
+  text-wrap: balance;
+}
+.section__hd h2 .mono { font-family: var(--cp-font-mono); font-weight: 500; letter-spacing: -0.06em; }
+.section__hd p { font-size: 17px; color: var(--cp-fg-2); line-height: 1.55; max-width: 620px; }
+
+/* ============ "Found in the wild" card ============ */
+.wild { max-width: 1100px; margin: -24px auto 0; padding: 0 24px; }
+.wild__inner {
+  display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;
+  max-width: 880px;
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  padding: 22px 26px;
+  position: relative;
+}
+.wild__inner::before {
+  content: ""; position: absolute; left: 0; top: 18px; bottom: 18px;
+  width: 2px; background: var(--cp-accent); border-radius: 0 2px 2px 0;
+}
+.wild__lbl {
+  font-family: var(--cp-font-mono); font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--cp-fg-3); display: flex; flex-direction: column; gap: 4px;
+  min-width: 120px; padding-top: 3px;
+}
+.wild__lbl b { color: var(--cp-accent-fg); font-weight: 500; letter-spacing: 0.04em; }
+.wild__lbl .meta { color: var(--cp-fg-4); font-size: 10px; }
+.wild__quotes { display: flex; flex-direction: column; gap: 10px; }
+.wild__quotes q {
+  font-family: var(--cp-font-mono); font-size: 14.5px;
+  color: var(--cp-fg); line-height: 1.5; letter-spacing: -0.02em;
+}
+.wild__quotes q::before, .wild__quotes q::after { color: var(--cp-fg-4); }
+.wild__quotes q.muted { color: var(--cp-fg-2); font-size: 13.5px; }
+@media (max-width: 720px) {
+  .wild__inner { grid-template-columns: 1fr; gap: 14px; padding: 20px; }
+  .wild__inner::before { display: none; }
+}
+
+/* ============ Features ============ */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.feature {
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color 150ms;
+}
+.feature:hover { border-color: var(--cp-border-strong); }
+.feature__num { font-family: var(--cp-font-mono); font-size: 11px; color: var(--cp-accent); letter-spacing: 0.04em; text-transform: uppercase; }
+.feature h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--cp-fg); margin: 0; }
+.feature p { color: var(--cp-fg-2); font-size: 14px; line-height: 1.55; }
+.feature__diagram {
+  margin-top: auto; padding-top: 16px; border-top: 1px solid var(--cp-border-muted);
+  font-family: var(--cp-font-mono); font-size: 11.5px; line-height: 1.7;
+  color: var(--cp-fg-3); letter-spacing: -0.02em; white-space: pre;
+}
+.feature__diagram .h { color: var(--cp-accent); }
+.feature__diagram .s { color: var(--cp-fg-2); }
+.feature__diagram .ok { color: var(--cp-success-fg); }
+
+/* ============ Steps ============ */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--cp-bg-elev-1);
+}
+.step {
+  padding: 28px 24px;
+  border-right: 1px solid var(--cp-border);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.step:last-child { border-right: 0; }
+.step__num { font-family: var(--cp-font-mono); font-size: 11px; color: var(--cp-accent); letter-spacing: 0.04em; text-transform: uppercase; }
+.step__title { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+.step__desc { color: var(--cp-fg-2); font-size: 14px; }
+.step__code {
+  background: var(--cp-bg-inset); border: 1px solid var(--cp-border);
+  border-radius: 4px; padding: 10px 12px;
+  font-family: var(--cp-font-mono); font-size: 12px; color: var(--cp-fg-2);
+  letter-spacing: -0.02em; line-height: 1.7;
+}
+.step__code .c { color: var(--cp-fg-3); }
+.step__code .a { color: var(--cp-accent-fg); }
+
+/* ============ Standard preview (file tree + markdown) ============ */
+.stdshow {
+  max-width: 1080px; margin: 0 auto;
+  padding: 24px 24px 0;
+}
+.stdshow__hd { margin-bottom: 28px; }
+.stdshow__frame {
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,92,40,0.04);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 420px;
+  font-family: var(--cp-font-mono);
+  font-size: 12.5px;
+  letter-spacing: -0.02em;
+}
+.stdshow__tree {
+  background: var(--cp-bg-elev-2);
+  border-right: 1px solid var(--cp-border);
+  padding: 12px 0;
+  color: var(--cp-fg-3);
+}
+.stdshow__tree .row {
+  display: flex; align-items: center; gap: 4px;
+  padding: 2px 14px;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+.stdshow__tree .row.fld { color: var(--cp-fg-2); }
+.stdshow__tree .row.fld .ico { color: var(--cp-fg-4); }
+.stdshow__tree .row.fld.open .ico { color: var(--cp-accent-fg); }
+.stdshow__tree .row.file { color: var(--cp-fg-3); }
+.stdshow__tree .row.file.active { background: color-mix(in oklab, var(--cp-accent) 18%, transparent); color: var(--cp-fg); border-left: 2px solid var(--cp-accent); }
+.stdshow__tree .row .ico { width: 12px; display: inline-flex; justify-content: center; flex-shrink: 0; color: var(--cp-fg-4); }
+.stdshow__tree .row.dim { color: var(--cp-fg-4); }
+.stdshow__tree .row .u { margin-left: auto; color: var(--cp-fg-4); font-size: 10.5px; }
+
+.stdshow__editor {
+  display: flex; flex-direction: column;
+  background: var(--cp-bg-elev-1);
+}
+.stdshow__bar {
+  display: flex; align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--cp-bg-elev-2);
+  border-bottom: 1px solid var(--cp-border);
+  color: var(--cp-fg-3);
+  font-size: 11px;
+}
+.stdshow__bar .crumb-sep { color: var(--cp-fg-4); }
+.stdshow__bar .crumb-cur { color: var(--cp-fg); }
+.stdshow__bar .spacer { flex: 1; }
+.stdshow__bar .tag { padding: 1px 6px; border: 1px solid var(--cp-border); border-radius: 3px; color: var(--cp-fg-2); }
+.stdshow__bar .tag.active { background: var(--cp-bg-inset); color: var(--cp-fg); }
+
+.stdshow__doc {
+  flex: 1;
+  overflow: hidden;
+  padding: 28px 38px;
+  color: var(--cp-fg-2);
+  font-family: var(--cp-font-sans);
+  font-size: 14px;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+}
+.stdshow__doc h1 {
+  font-family: var(--cp-font-sans);
+  font-size: 22px; font-weight: 600;
+  color: var(--cp-fg);
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cp-border-muted);
+}
+.stdshow__doc h2 {
+  font-family: var(--cp-font-mono);
+  font-size: 11px; font-weight: 500;
+  color: var(--cp-fg-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 22px 0 8px;
+}
+.stdshow__doc p { margin: 0 0 8px; color: var(--cp-fg-2); }
+.stdshow__doc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.stdshow__doc li {
+  display: grid; grid-template-columns: 18px 1fr; gap: 4px;
+  color: var(--cp-fg-2);
+  padding-left: 2px;
+}
+.stdshow__doc li::before {
+  content: "\00B7";
+  color: var(--cp-accent-fg);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.stdshow__doc code {
+  font-family: var(--cp-font-mono);
+  font-size: 12px;
+  background: var(--cp-bg-inset);
+  border: 1px solid var(--cp-border-muted);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--cp-fg);
+}
+
+.stdshow__hint {
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 18px; margin-bottom: 8px;
+  font-family: var(--cp-font-mono); font-size: 11.5px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+}
+.stdshow__hint .pill-light {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--cp-bg-elev-2);
+  border: 1px solid var(--cp-border);
+  color: var(--cp-fg-2);
+}
+.stdshow__hint .pill-light .plus { color: var(--cp-accent-fg); font-weight: 600; }
+
+@media (max-width: 880px) {
+  .stdshow__frame { grid-template-columns: 1fr; }
+  .stdshow__tree { display: none; }
+}
+
+/* ============ Quote ============ */
+.quote {
+  max-width: 880px; margin: 0 auto;
+  padding: 72px 24px;
+  text-align: center;
+}
+.quote blockquote {
+  margin: 0; font-family: var(--cp-font-sans);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  color: var(--cp-fg);
+}
+.quote blockquote .mono {
+  font-family: var(--cp-font-mono);
+  color: var(--cp-accent);
+  font-weight: 500;
+}
+.quote cite {
+  display: block; margin-top: 22px;
+  font-family: var(--cp-font-mono); font-size: 12px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+  font-style: normal;
+}
+
+/* ============ CTA strip ============ */
+.ctastrip {
+  max-width: 1100px; margin: 0 auto 64px;
+  padding: 64px 32px;
+  text-align: center;
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  position: relative; overflow: hidden;
+}
+.ctastrip::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 100% at 50% 100%, rgba(255,92,40,0.18), transparent 70%);
+  pointer-events: none;
+}
+.ctastrip > * { position: relative; }
+.ctastrip h2 {
+  font-size: clamp(32px, 3.6vw, 44px);
+  font-weight: 600; letter-spacing: -0.04em;
+  margin: 0 0 12px;
+}
+.ctastrip h2 .mono { font-family: var(--cp-font-mono); font-weight: 500; letter-spacing: -0.06em; }
+.ctastrip p { color: var(--cp-fg-2); font-size: 15px; margin: 0 0 28px; }
+
+/* ============ Footer ============ */
+footer.footer {
+  border-top: 1px solid var(--cp-border);
+  padding: 32px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; flex-wrap: wrap;
+}
+.footer__brand { display: flex; align-items: center; gap: 10px; }
+.footer__brand .mark { width: 20px; height: 20px; }
+.footer__brand .word { font-size: 13px; }
+.footer__meta {
+  margin-left: 6px;
+  font-family: var(--cp-font-mono); font-size: 11px;
+  color: var(--cp-fg-3); letter-spacing: -0.02em;
+}
+.footer__links { display: flex; gap: 18px; }
+.footer__links a { font-size: 12px; color: var(--cp-fg-3); border: none; }
+.footer__links a:hover { color: var(--cp-fg); }
+
+.gh-icon { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ============ Responsive ============ */
+@media (max-width: 880px) {
+  .preview__body { grid-template-columns: 1fr; }
+  .pv-side { display: none; }
+  .features, .steps { grid-template-columns: 1fr; }
+  .step { border-right: 0; border-bottom: 1px solid var(--cp-border); }
+  .step:last-child { border-bottom: 0; }
+  .nav__links { display: none; }
+}
+</style>
+</head>
+<body class="cp-grid-bg">
+<svg style="display:none"><defs>
+  <symbol id="icon-github" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+  </symbol>
+  <symbol id="icon-mark" viewBox="0 0 32 32">
+    <path d="M10 10 L17 16 L10 22" stroke="#0A0A0B" stroke-width="2.5" stroke-linecap="square" fill="none"/>
+    <path d="M17 10 L24 16 L17 22" stroke="#0A0A0B" stroke-width="2.5" stroke-linecap="square" fill="none" opacity="0.5"/>
+  </symbol>
+  <symbol id="icon-repo" viewBox="0 0 16 16" fill="none">
+    <path d="M2 2.5A1.5 1.5 0 0 1 3.5 1h9A1.5 1.5 0 0 1 14 2.5V13a1 1 0 0 1-1 1H4a2 2 0 0 0-2 2V2.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M4 12h9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+  </symbol>
+</defs></svg>
+<div class="wrap">
+
+  <!-- ============ Nav ============ -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <div class="brand">
+        <div class="mark">
+          <svg width="16" height="16"><use href="#icon-mark"/></svg>
+        </div>
+        <span class="word">codeplaybook</span>
+      </div>
+      <div class="nav__links">
+        <a href="#how">Problem</a>
+        <a href="#standards">The fix</a>
+        <a href="#standards-preview">How it works</a>
+      </div>
+      <div class="nav__right">
+        <a href="https://github.com/codeplaybook/codeplaybook" target="_blank" rel="noopener" class="btn btn--primary btn--sm">
+          <svg class="gh-icon"><use href="#icon-github"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero">
+    <h1>
+      Your coding standards,<br>
+      written <span class="mono">once</span>, deployed to <span class="accent">every</span> AI agent.
+    </h1>
+    <p>
+      Prescribe architecture, onboard a messy repo, audit violations, sync everywhere.
+      One source of truth &mdash; every agent on your team stays in lockstep, automatically.
+    </p>
+    <div class="hero__cta">
+      <a href="https://github.com/codeplaybook/codeplaybook" target="_blank" rel="noopener" class="btn btn--primary">
+        <svg class="gh-icon"><use href="#icon-github"/></svg>
+        View on GitHub <span style="opacity:0.7">&rarr;</span>
+      </a>
+      <a href="#" class="btn btn--secondary" id="copy-cmd">
+        <span style="color:var(--cp-fg-3)">$</span> npx codeplaybook init <span class="btn__kbd">copy</span>
+      </a>
+    </div>
+
+    <div class="hero__meta">
+      <span><b>MIT</b> open source</span>
+      <span class="dot"></span>
+      <span>Works on macOS, Linux, Windows</span>
+    </div>
+  </section>
+
+  <!-- ============ Agent strip ============ -->
+  <div class="agents">
+    <span class="agents__lbl">Works with the agents you already use</span>
+    <div class="agents__row">
+      <span>claude code</span>
+      <span>cursor</span>
+      <span>github copilot</span>
+    </div>
+  </div>
+
+  <!-- ============ Product preview ============ -->
+  <section class="preview" id="preview">
+    <div class="preview__frame">
+      <div class="preview__hd">
+        <div class="preview__dots"><span></span><span></span><span></span></div>
+        <div class="preview__title">codeplaybook &middot; audit dashboard</div>
+        <div style="width:48px"></div>
+      </div>
+      <div class="preview__body">
+        <aside class="pv-side">
+          <div class="pv-side__lbl">Repositories <span class="n">8</span></div>
+          <div class="pv-repo">
+            <div class="pv-repo__ico"><svg width="13" height="13"><use href="#icon-repo"/></svg></div>
+            <div class="pv-repo__nm">acme/web</div>
+            <div class="pv-repo__ct">12</div>
+          </div>
+          <div class="pv-repo active">
+            <div class="pv-repo__ico"><svg width="13" height="13"><use href="#icon-repo"/></svg></div>
+            <div class="pv-repo__nm">acme/api</div>
+            <div class="pv-repo__ct">23</div>
+          </div>
+          <div class="pv-repo">
+            <div class="pv-repo__ico"><svg width="13" height="13"><use href="#icon-repo"/></svg></div>
+            <div class="pv-repo__nm">acme/mobile</div>
+            <div class="pv-repo__ct">7</div>
+          </div>
+          <div class="pv-repo">
+            <div class="pv-repo__ico"><svg width="13" height="13"><use href="#icon-repo"/></svg></div>
+            <div class="pv-repo__nm">acme/infra</div>
+            <div class="pv-repo__ct">4</div>
+          </div>
+          <div class="pv-repo">
+            <div class="pv-repo__ico"><svg width="13" height="13"><use href="#icon-repo"/></svg></div>
+            <div class="pv-repo__nm">acme/design-system</div>
+            <div class="pv-repo__ct zero">0</div>
+          </div>
+        </aside>
+        <div class="pv-main">
+          <div class="pv-main__crumb">
+            <span>Repositories</span>
+            <span style="color:var(--cp-fg-4)">/</span>
+            <span class="accent">acme/api</span>
+          </div>
+          <h3>acme/api</h3>
+          <p class="pv-main__sub">23 open findings across 4 severity tiers &middot; Run <span class="code">/codeplaybook-audit</span> for a fresh scan.</p>
+
+          <div class="pv-v selected">
+            <div class="pv-v__cb checked"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5l4.5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="pv-badge2 high">High</span>
+            <div class="pv-v__main">
+              <div class="pv-v__rule">Mutate <code style="font-family:var(--cp-font-mono);font-size:12.5px;background:var(--cp-bg-inset);padding:0 4px;border-radius:3px;color:var(--cp-fg)">@Published</code> properties only on the main actor</div>
+              <div class="pv-v__meta"><span class="file">Sources/Workspace/SessionStore.swift<span class="ln">:71</span></span><span>&middot;</span><span>concurrency</span></div>
+            </div>
+            <span class="pv-v__chev">&#9662;</span>
+          </div>
+
+          <div class="pv-v selected">
+            <div class="pv-v__cb checked"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5l4.5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="pv-badge2 med">Medium</span>
+            <div class="pv-v__main">
+              <div class="pv-v__rule">Views should not perform network calls directly &mdash; defer to a ViewModel</div>
+              <div class="pv-v__meta"><span class="file">Sources/Views/RepoListView.swift<span class="ln">:34</span></span><span>&middot;</span><span>view-layers</span></div>
+            </div>
+            <span class="pv-v__chev">&#9662;</span>
+          </div>
+
+          <div class="pv-v selected">
+            <div class="pv-v__cb checked"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5l4.5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="pv-badge2 med">Medium</span>
+            <div class="pv-v__main">
+              <div class="pv-v__rule">Stores need a unit test covering at least the load path</div>
+              <div class="pv-v__meta"><span class="file">Tests/SessionStoreTests.swift<span class="ln">:1</span></span><span>&middot;</span><span>testing</span></div>
+            </div>
+            <span class="pv-v__chev">&#9662;</span>
+          </div>
+        </div>
+
+        <!-- floating bulk-action bar -->
+        <div class="pv-actionbar">
+          <span class="pv-actionbar__count"><b>3</b> selected</span>
+          <span class="pv-actionbar__sep"></span>
+          <button class="pv-actionbar__btn">Clear</button>
+          <button class="pv-actionbar__btn">Dismiss</button>
+          <button class="pv-actionbar__cta">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11V3a1 1 0 0 1 1-1h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Copy fix prompt
+            <span class="pv-actionbar__kbd">&#8984;C</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ The problem ============ -->
+  <section class="section" id="how">
+    <div class="section__hd">
+      <span class="eyebrow"><span class="pill">the problem</span> A pattern we keep seeing.</span>
+      <p style="font-size:18px;color:var(--cp-fg-2);margin-bottom:18px;letter-spacing:-0.01em">You started fast. AI wrote the boilerplate, scaffolded the routes, filled in the components. Shipping felt effortless &mdash; for a while.</p>
+      <h2>Then six months in, you're <span class="mono">not building</span> anymore. You're untangling.</h2>
+      <p>The code <em style="color:var(--cp-fg);font-style:italic">works</em>. But every file looks like it was written by a different person &mdash; because it was. A different conversation, a different prompt, a different day.</p>
+    </div>
+  </section>
+
+  <!-- found in the wild -->
+  <div class="wild">
+    <div class="wild__inner">
+      <div class="wild__lbl">
+        <span>found in the wild</span>
+        <b>r/vibecoding</b>
+        <span class="meta">2.4k upvotes</span>
+      </div>
+      <div class="wild__quotes">
+        <q>vibe coded for 6 months. my codebase is a disaster.</q>
+        <q class="muted">new file here, duplicate function there, 3 different ways to handle the same thing across the codebase.</q>
+        <q class="muted">the generation was fast. the cleanup is a nightmare.</q>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:64px">
+    <div class="features">
+      <div class="feature">
+        <div class="feature__num">drift / 01</div>
+        <h3>The AI just kept adding.</h3>
+        <p>New file here, duplicate function there. Services mixing database calls with business logic. Components that fetch, manage state, <em>and</em> render &mdash; all in one file. Nobody was thinking about structure.</p>
+        <div class="feature__diagram"><span class="h">App.tsx</span>     586 lines
+<span class="s">  &#9500;&#9472; db calls
+  &#9500;&#9472; state
+  &#9500;&#9472; event handlers
+  &#9492;&#9472; rendering</span></div>
+      </div>
+
+      <div class="feature">
+        <div class="feature__num">drift / 02</div>
+        <h3>Three ways to do the same thing.</h3>
+        <p>Three different error-handling patterns. Two competing folder conventions. Test files that follow no consistent shape. The rules live in your head and in old PR comments nobody reads.</p>
+        <div class="feature__diagram"><span class="s">try/catch &#183;&#183;&#183;&#183;&#183; 23 files</span>
+<span class="s">.catch(()=>) &#183;&#183; 19 files</span>
+<span class="s">Result&lt;T&gt; &#183;&#183;&#183;&#183;&#183;&#183; 11 files</span>
+<span class="h">no convention</span></div>
+      </div>
+
+      <div class="feature">
+        <div class="feature__num">drift / 03</div>
+        <h3>Touching one part breaks another.</h3>
+        <p>So tangled that refactoring is a 2-hour rabbit hole that ends in giving up. Rules forked across every agent's config folder, drifting on their own. The cleanup is a nightmare.</p>
+        <div class="feature__diagram"><span class="s">refactor</span>      <span class="h">2h, gave up</span>
+<span class="s">touched A</span>     <span class="h">B, C broke</span>
+<span class="s">rules forked</span>  <span class="h">stale</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Quote ============ -->
+  <section class="quote">
+    <blockquote>
+      &ldquo;First time my team's architectural rules actually <span class="mono">stuck</span>. We stopped re-litigating the same drift in every PR &mdash; the agents just don't write it that way anymore.&rdquo;
+    </blockquote>
+    <cite>&mdash; eng lead at a Series B startup &middot; 40 engineers &middot; 6 repos</cite>
+  </section>
+
+  <!-- ============ The fix / how ============ -->
+  <section class="section" id="standards" style="padding-top:0">
+    <div class="section__hd">
+      <span class="eyebrow"><span class="pill">the fix</span> One folder. Every agent.</span>
+      <h2>Write your standards <span class="mono">once</span>. Deploy them everywhere your team codes.</h2>
+      <p>Four commands. No new framework, no DSL to learn. Codeplaybook reads your repo, writes to your agents, and gets out of the way.</p>
+    </div>
+    <div class="steps" style="grid-template-columns:repeat(4,1fr)">
+      <div class="step">
+        <div class="step__num">01 &middot; prescribe</div>
+        <div class="step__title">Pick a blueprint</div>
+        <div class="step__desc">Hexagonal, clean architecture, feature slices. Curated standards generated upfront &mdash; your agent follows the rules from day one.</div>
+        <div class="step__code"><span class="a">/codeplaybook-prescribe</span></div>
+      </div>
+      <div class="step">
+        <div class="step__num">02 &middot; onboard</div>
+        <div class="step__title">Mine your repo</div>
+        <div class="step__desc">Scan an existing codebase for recurring patterns and turn them into enforceable standards. Bring drift into the open.</div>
+        <div class="step__code"><span class="a">/codeplaybook-onboard</span></div>
+      </div>
+      <div class="step">
+        <div class="step__num">03 &middot; audit</div>
+        <div class="step__title">Find violations</div>
+        <div class="step__desc">See every drift with rule, evidence, and a suggested fix. Approve before anything changes.</div>
+        <div class="step__code"><span class="a">/codeplaybook-audit</span></div>
+      </div>
+      <div class="step">
+        <div class="step__num">04 &middot; sync</div>
+        <div class="step__title">Deploy everywhere</div>
+        <div class="step__desc">One source of truth, compiled to whatever each agent expects. Add a new tool tomorrow &mdash; it just picks up the same rules.</div>
+        <div class="step__code"><span class="a">/codeplaybook-sync</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ What a standard looks like ============ -->
+  <section class="stdshow" id="standards-preview">
+    <div class="section__hd stdshow__hd">
+      <span class="eyebrow"><span class="pill">the standard</span> Plain markdown. Auditable, diffable, reviewable.</span>
+      <h2>Every rule <span class="mono">lives in your repo</span> as a markdown file.</h2>
+      <p>Codeplaybook compiles each standard into the format every agent expects.</p>
+    </div>
+
+    <div class="stdshow__frame">
+      <!-- file tree -->
+      <div class="stdshow__tree">
+        <div class="row fld open"><span class="ico">&#9662;</span><span style="color:var(--cp-fg)">your-repo</span></div>
+        <div class="row dim" style="padding-left:32px"><span class="ico">&#9656;</span><span>.github</span></div>
+        <div class="row dim" style="padding-left:32px"><span class="ico">&#9656;</span><span>.cursor</span></div>
+        <div class="row dim" style="padding-left:32px"><span class="ico">&#9656;</span><span>.claude</span></div>
+        <div class="row fld open" style="padding-left:32px"><span class="ico">&#9662;</span><span style="color:var(--cp-fg-2)">.codeplaybook</span></div>
+        <div class="row" style="padding-left:50px"><span class="ico">&#9656;</span><span>commands</span></div>
+        <div class="row fld open" style="padding-left:50px;color:var(--cp-fg-2)"><span class="ico">&#9662;</span><span>standards</span></div>
+        <div class="row file active" style="padding-left:74px">architecture-boundaries.md<span class="u">U</span></div>
+        <div class="row file" style="padding-left:74px">error-handling.md</div>
+        <div class="row file" style="padding-left:74px">module-structure.md</div>
+        <div class="row file" style="padding-left:74px">naming-conventions.md</div>
+        <div class="row file" style="padding-left:74px">test-conventions.md</div>
+        <div class="row dim" style="padding-left:32px"><span class="ico">&#9656;</span><span>src</span></div>
+        <div class="row dim" style="padding-left:32px"><span>package.json</span></div>
+      </div>
+
+      <!-- editor -->
+      <div class="stdshow__editor">
+        <div class="stdshow__bar">
+          <span>your-repo</span><span class="crumb-sep">&rsaquo;</span>
+          <span>.codeplaybook</span><span class="crumb-sep">&rsaquo;</span>
+          <span>standards</span><span class="crumb-sep">&rsaquo;</span>
+          <span class="crumb-cur">architecture-boundaries.md</span>
+          <span class="spacer"></span>
+          <span class="tag">Markdown</span>
+          <span class="tag active">Preview</span>
+        </div>
+
+        <div class="stdshow__doc">
+          <h1>Architecture Boundaries</h1>
+          <p>Controllers, services, and repositories must respect their layer responsibilities. Controllers handle request and response mapping only. Services contain business logic and orchestrate repositories. Repositories encapsulate all data access.</p>
+
+          <h2>Scope</h2>
+          <p>TypeScript files under <code>src/api/</code> in <code>controllers</code>, <code>services</code>, and <code>repositories</code> subdirectories.</p>
+
+          <h2>Rules</h2>
+          <ul>
+            <li><span>Controllers must not import repositories directly &mdash; delegate work to services.</span></li>
+            <li><span>Services must not call data-access methods directly &mdash; delegate to repositories.</span></li>
+            <li><span>Repositories must contain only data-access logic &mdash; no business rules or validation.</span></li>
+            <li><span>Cross-module dependencies go through public module exports, not direct file imports.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="stdshow__hint">
+      <span class="pill-light"><span class="plus">+</span> Add your own standard, or edit any existing one from Codeplaybook</span>
+    </div>
+  </section>
+
+  <!-- ============ CTA strip ============ -->
+  <div class="ctastrip">
+    <h2>Stop untangling. <span class="mono">Ship the rules first.</span></h2>
+    <p>Open source. MIT-licensed. Free for personal repos and small teams.</p>
+    <div class="hero__cta" style="justify-content:center">
+      <a href="https://github.com/codeplaybook/codeplaybook" target="_blank" rel="noopener" class="btn btn--primary">
+        <svg class="gh-icon"><use href="#icon-github"/></svg>
+        View on GitHub
+      </a>
+    </div>
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <footer class="footer">
+    <div class="footer__brand">
+      <div class="mark">
+          <svg width="14" height="14"><use href="#icon-mark"/></svg>
+      </div>
+      <span class="word">codeplaybook</span>
+      <span class="footer__meta">made with restraint &middot; <a href="https://www.linkedin.com/in/shyam-meher/" target="_blank" rel="noopener" style="color:var(--cp-fg-2);text-decoration:underline;text-underline-offset:2px">Shyam</a></span>
+    </div>
+  </footer>
+
+</div>
+<script>
+document.getElementById('copy-cmd').addEventListener('click', function(e) {
+  e.preventDefault();
+  var kbd = this.querySelector('.btn__kbd');
+  navigator.clipboard.writeText('npx codeplaybook init');
+  kbd.textContent = 'copied!';
+  setTimeout(function() { kbd.textContent = 'copy'; }, 1500);
+});
+</script>
+</body>
+</html>

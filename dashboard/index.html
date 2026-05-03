@@ -897,10 +897,17 @@ function ViolationsPane({ repo, violations }) {
     setTimeout(() => setToast({ show: false, msg: "" }), 2000);
   };
   const onCopy = () => {
-    const fixes = violations.filter(v => selected.has(v.id)).map(v => v.fix).filter(Boolean).join("\n\n");
-    if (!fixes) return;
+    const sel = violations.filter(v => selected.has(v.id));
+    if (!sel.length) return;
+    const parts = sel.map(v => {
+      let s = `- **${v.file}:${v.line}** — [${v.standard}] ${v.rule}`;
+      if (v.found) s += `\n  Found: ${v.found}`;
+      if (v.fix) s += `\n  Fix: ${v.fix}`;
+      return s;
+    });
+    const prompt = `Fix the following codeplaybook violations:\n\n${parts.join("\n\n")}`;
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(fixes).then(() => {
+      navigator.clipboard.writeText(prompt).then(() => {
         showToast(`Copied ${selected.size} fix prompt${selected.size === 1 ? "" : "s"}`);
       });
     } else {

@@ -76,10 +76,12 @@ Find all matching files. Skip `node_modules/`, `dist/`, `build/`, `.git/`, and o
 
 ### 2b — Check each rule
 
+**Strict rule matching:** Every reported violation MUST cite an exact rule from the standard's `## Rules` section. Do not paraphrase, generalize, or expand rule scope. If a standard says "services, controllers, and repositories must have tests," do NOT extrapolate that to interceptors, pipes, or other file types not mentioned in the rule.
+
 For each rule in the standard:
 
 1. Read each file in scope
-2. Look for patterns that violate the rule. Use the rule text as guidance for what constitutes a violation. Examples:
+2. Look for patterns that violate the rule. Use the **exact** rule text to determine what constitutes a violation — nothing more, nothing less. Examples:
    - "Controllers must not contain business logic" → look for database queries, complex calculations, or data transformation in controller files
    - "Do not swallow errors with empty catch blocks" → look for `catch` blocks with empty bodies or only comments
    - "Services must not import from infrastructure" → check import statements for infrastructure module references
@@ -215,24 +217,24 @@ codeplaybook audit-save --file .codeplaybook/audit-results.json
 
 This step requires no user interaction. If the save fails, print a warning but continue to Step 4.
 
-After saving, print:
-
-```
-Audit results saved. View the full dashboard with:
-  npx codeplaybook dashboard
-  → http://localhost:4200
-```
+After saving, do NOT print any message — the results will be surfaced in Step 4's exit paths instead.
 
 ---
 
 ## Step 4 — Ask User
 
-After presenting the report, ask via AskUserQuestion with options:
+After presenting the report, ask via AskUserQuestion:
 
-- **Fix all** — Propose fixes for every violation, one at a time, with confirmation
-- **Fix selected** — Let user pick which violations to address
-- **Export report** — Save the report to `.codeplaybook/audit-report.md`
-- **Dismiss** — Exit without taking action
+```
+Results saved to audit history. How would you like to proceed?
+```
+
+With options:
+
+- **Fix all** — Propose fixes for every violation, one at a time
+- **Fix selected** — Pick which violations to address
+- **Export report** — Save report to `.codeplaybook/audit-report.md`
+- **Dismiss** — Done for now (browse anytime with `npx codeplaybook dashboard`)
 
 ### If "Fix all"
 
@@ -255,9 +257,9 @@ Print:
 ```
 Report saved to .codeplaybook/audit-report.md
 
-View results interactively with:
-  npx codeplaybook dashboard
-  → http://localhost:4200
+What's next:
+  npx codeplaybook dashboard    — browse violations interactively
+  /codeplaybook-audit           — re-run the audit later to check progress
 ```
 
 Exit the workflow.
@@ -268,6 +270,10 @@ Print:
 
 ```
 Audit complete. No changes made.
+
+What's next:
+  npx codeplaybook dashboard    — browse violations interactively
+  /codeplaybook-audit           — re-run the audit later to check progress
 ```
 
 Exit the workflow.
@@ -348,10 +354,12 @@ Files modified:
 ============================================================
 ```
 
-If remaining violations > 0, additionally print:
+Additionally print:
 
 ```
-Run /codeplaybook-audit again to check remaining violations.
+What's next:
+  npx codeplaybook dashboard    — browse all violations interactively
+  /codeplaybook-audit           — re-run the audit to check progress
 ```
 
 ---

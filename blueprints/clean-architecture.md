@@ -26,6 +26,9 @@ Four layers (inside → outside):
 
 ### Standard: Clean Architecture Dependency Rule
 
+#### Severity
+High
+
 #### Scope
 All backend source files
 
@@ -39,6 +42,9 @@ All backend source files
 
 ### Standard: Clean Architecture Layer Structure
 
+#### Severity
+Medium
+
 #### Scope
 All backend source files
 
@@ -50,6 +56,9 @@ All backend source files
 * Each use case must define its own input and output data structures (request/response models) — do not pass framework objects (HTTP request, ORM models) across layer boundaries
 
 ### Standard: Use Case Isolation
+
+#### Severity
+Medium
 
 #### Scope
 All backend source files in the use cases layer

@@ -32,6 +32,9 @@ Key principles:
 
 ### Standard: Component Layers
 
+#### Severity
+Medium
+
 #### Scope
 All frontend component files
 
@@ -43,6 +46,9 @@ All frontend component files
 * Co-locate component styles and tests with the component file
 
 ### Standard: Data Layer
+
+#### Severity
+High
 
 #### Scope
 All frontend data fetching and API integration files
@@ -56,6 +62,9 @@ All frontend data fetching and API integration files
 
 ### Standard: State Management
 
+#### Severity
+Medium
+
 #### Scope
 All frontend state management files
 
@@ -68,6 +77,9 @@ All frontend state management files
 
 ### Standard: Shared UI Components
 
+#### Severity
+Medium
+
 #### Scope
 All shared/common UI component files
 
@@ -79,6 +91,9 @@ All shared/common UI component files
 * Document shared component props and variants — these are the team's design system building blocks
 
 ### Standard: Page/Route Organization
+
+#### Severity
+Low
 
 #### Scope
 All page and route files

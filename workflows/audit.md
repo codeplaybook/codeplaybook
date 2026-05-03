@@ -70,13 +70,15 @@ Convert the `## Scope` section into file glob patterns:
 - "React components" → `**/*.tsx`
 - "All test files" → `**/*.{test,spec}.{ts,js,tsx,jsx}`
 - "Python files in src/" → `src/**/*.py`
-- If scope is broad or unclear → scan `src/**/*` or the project root
+- If the scope description cannot be mapped to specific glob patterns, **skip the standard** and print: `Skipping "[Standard Name]" — could not resolve scope to file patterns. Edit the standard's ## Scope section to be more specific.`
 
 Find all matching files. Skip `node_modules/`, `dist/`, `build/`, `.git/`, and other common build artifacts.
 
 ### 2b — Check each rule
 
 **Strict rule matching:** Every reported violation MUST cite an exact rule from the standard's `## Rules` section. Do not paraphrase, generalize, or expand rule scope. If a standard says "services, controllers, and repositories must have tests," do NOT extrapolate that to interceptors, pipes, or other file types not mentioned in the rule.
+
+**Scope enforcement:** Only report violations in files that match the resolved scope patterns. If you are uncertain whether a file is in scope, do not report it.
 
 For each rule in the standard:
 

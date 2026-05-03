@@ -2,12 +2,6 @@
 
 Organizes code **by feature** instead of by technical layer. Each feature (users, orders, payments) is a self-contained vertical slice with its own controller, service, repository, DTOs, and tests. Features communicate through a shared kernel, never by importing each other directly.
 
-This pattern excels when:
-- Features evolve at different speeds and need independent deployability
-- Teams own specific features end-to-end
-- The codebase is large enough that layer-based organization creates navigation overhead
-- You want to add or remove features without touching unrelated code
-
 Key principles:
 - **Feature independence**: Each feature can be understood, tested, and modified in isolation
 - **Shared kernel**: Cross-cutting concerns (auth, logging, base classes) live in a shared directory
@@ -31,6 +25,9 @@ Key principles:
 
 ### Standard: Feature Isolation
 
+#### Severity
+High
+
 #### Scope
 All source files in feature directories
 
@@ -43,6 +40,9 @@ All source files in feature directories
 
 ### Standard: Shared Kernel
 
+#### Severity
+Medium
+
 #### Scope
 All source files
 
@@ -54,6 +54,9 @@ All source files
 * Shared modules must be backward-compatible — changes should not break existing feature consumers
 
 ### Standard: Feature Directory Structure
+
+#### Severity
+Medium
 
 #### Scope
 All feature directories

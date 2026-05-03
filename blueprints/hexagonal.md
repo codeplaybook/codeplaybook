@@ -25,6 +25,9 @@ Three layers:
 
 ### Standard: Hexagonal Layer Boundaries
 
+#### Severity
+High
+
 #### Scope
 All backend source files
 
@@ -37,6 +40,9 @@ All backend source files
 
 ### Standard: Hexagonal Directory Structure
 
+#### Severity
+Medium
+
 #### Scope
 All backend source files
 
@@ -48,6 +54,9 @@ All backend source files
 * Each bounded context or module should replicate the three-layer structure internally
 
 ### Standard: Port & Adapter Pattern
+
+#### Severity
+High
 
 #### Scope
 All backend source files

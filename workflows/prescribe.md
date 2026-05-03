@@ -93,11 +93,101 @@ Remember the result as `$FRAMEWORK`.
 
 ---
 
-## Step 3 — Present Blueprints
+## Step 2.5 — Analyze Project Shape
 
-Read all blueprint files from the `$AGENT_BLUEPRINTS_DIR` directory (relative to this workflow file). Present them to the user.
+Before recommending blueprints, analyze the project to provide an informed recommendation.
 
-Print:
+### 2.5a — Check for source files
+
+Determine if the project has meaningful source code by checking for files in `src/`, `app/`, `internal/`, `lib/`, or the project root matching common source extensions (`.ts`, `.js`, `.py`, `.go`, `.rs`, `.java`, `.kt`, `.cs`).
+
+If **no source files exist** (greenfield/empty project), skip to **2.5e — Greenfield Questions**.
+
+### 2.5b — Directory structure scan
+
+When source code exists, scan for these directory patterns:
+
+| Pattern | Signal |
+|---------|--------|
+| `src/domain/`, `src/application/`, `src/infrastructure/` | Hexagonal |
+| `src/entities/`, `src/usecases/`, `src/adapters/` | Clean Architecture |
+| `src/features/*/`, `src/modules/*/` | Feature Slices |
+| `src/components/`, `src/hooks/`, `src/pages/` | Frontend Component Architecture |
+| `packages/*/`, `apps/*/` | Monorepo |
+
+### 2.5c — Feature/domain count
+
+Count distinct domain areas by looking at:
+- Subdirectories in `features/`, `modules/`, or the main source root
+- Naming clusters (files sharing a domain prefix: `user*`, `order*`, `payment*`)
+
+### 2.5d — Deployment shape
+
+- Monorepo: `packages/`, `apps/`, workspace config (`pnpm-workspace.yaml`, `turbo.json`, `lerna.json`)
+- Single app: one `src/` root
+- Frontend + backend split: both component-like and controller-like directories present
+
+### 2.5e — Classify and recommend
+
+**When source files exist**, map findings to a recommendation:
+
+| Signal | Recommend |
+|--------|-----------|
+| domain/application/infrastructure dirs | Hexagonal |
+| entities/usecases/adapters dirs | Clean Architecture |
+| Multiple self-contained feature dirs with collocated layers | Feature Slices |
+| components/hooks/pages with no backend | Frontend Component Architecture |
+| Frontend + backend in same repo | Feature Slices (backend) + Frontend Component Architecture |
+| No clear architecture signals | Show all, no recommendation |
+
+Always suggest Cross-Cutting Concerns as a complementary blueprint (when available).
+
+**When greenfield/empty** (2.5e — Greenfield Questions), ask via AskUserQuestion:
+
+```
+Let's understand your project's architecture needs:
+
+1. Is this primarily a backend, frontend, or full-stack project?
+2. How many distinct domain areas do you expect? (1-2 / 3-5 / 6+)
+3. Do you need multiple independently deployable services? (Yes / No / Not sure yet)
+```
+
+Map answers to recommendations:
+- Backend + 1-2 domains + no microservices → Hexagonal or Clean Architecture
+- Backend + 3+ domains → Feature Slices
+- Frontend → Frontend Component Architecture
+- Full-stack → Feature Slices + Frontend Component Architecture
+- Microservices → Flag that a microservices blueprint isn't available yet; recommend Feature Slices as closest fit
+
+---
+
+## Step 3 — Present Recommendation
+
+Read all blueprint files from the `$AGENT_BLUEPRINTS_DIR` directory (relative to this workflow file).
+
+If Step 2.5 produced a recommendation, print:
+
+```
+============================================================
+  ARCHITECTURE RECOMMENDATION
+============================================================
+
+Based on your project:
+  [summary of analysis findings or intent answers]
+
+Recommended: [Blueprint Name]
+  [1-2 sentence reason why this fits]
+
+Also recommended: Cross-Cutting Concerns (if available)
+  Pairs with any architecture for error handling, logging, validation.
+
+Other available blueprints:
+  - [Other 1] — [one-line description]
+  - [Other 2] — [one-line description]
+============================================================
+```
+
+If Step 2.5 could not determine a recommendation (no clear signals), print all blueprints:
 
 ```
 prescribe: selecting architecture
@@ -127,11 +217,11 @@ Available architectural blueprints:
      Best for frontend apps of any size — React, Vue, Angular, Svelte.
 ```
 
-Ask via AskUserQuestion:
+Ask via AskUserQuestion with options:
 
-```
-Pick one or more blueprints (e.g., "1" or "1,3" to combine):
-```
+- **Go with recommendation** — use the recommended blueprint(s) (only shown when a recommendation exists)
+- **Pick different** — choose from all blueprints (e.g., "1" or "1,3" to combine)
+- **Combine** — select multiple blueprints
 
 Remember selected blueprints as `$BLUEPRINTS`.
 
@@ -179,6 +269,10 @@ Generate standards in `.codeplaybook/standards/{slug}.md`:
 # {Standard Name}
 
 {Description from blueprint, mentioning the chosen framework}
+
+## Severity
+
+{Extract from the blueprint's #### Severity field. If absent, default to Medium.}
 
 ## Scope
 

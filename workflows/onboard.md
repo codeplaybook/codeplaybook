@@ -248,6 +248,8 @@ Pass the detected stack from Step 4 (languages, frameworks, architecture markers
 | 5 | Error Handling | [`$AGENT_ANALYSES_DIR/error-handling.md`]($AGENT_ANALYSES_DIR/error-handling.md) |
 | 6 | Import & Module Patterns | [`$AGENT_ANALYSES_DIR/import-patterns.md`]($AGENT_ANALYSES_DIR/import-patterns.md) |
 
+Reference files are located relative to this workflow file (in the same skill directory).
+
 Skip any analysis the user did not select.
 
 ### Output schema (internal; do not print as-is to user)
@@ -283,9 +285,13 @@ For each Standard insight, create a Markdown file at `.codeplaybook/_drafts/stan
 
 {Description of what the standard covers and why it matters. Reference the evidence found during analysis.}
 
+## Severity
+
+{Assign based on impact: architecture boundaries or security = High, consistency patterns = Medium, optional style preferences = Low}
+
 ## Scope
 
-{Where this standard applies, e.g. "TypeScript files in src/", "React components", "All test files". Be specific based on evidence.}
+{Where this standard applies, e.g. "TypeScript files in src/", "React components", "All test files". Be specific based on evidence — reflect only the actual files where evidence was found, not a superset.}
 
 ## Rules
 
@@ -324,6 +330,10 @@ For each Command insight, create a Markdown file at `.codeplaybook/_drafts/comma
 
 {Description}
 ```
+
+### Evidence-Bound Generation
+
+Every rule in a generated standard must be directly supported by a specific insight from the analysis. If the analysis found a pattern in services, the rule applies to services — do not broaden scope beyond what was observed. The `## Scope` section must reflect the actual files where evidence was found, not a superset.
 
 ### Generation Rules
 

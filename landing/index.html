@@ -406,6 +406,7 @@ nav.nav {
   overflow: hidden;
   background: var(--cp-bg-elev-1);
 }
+.steps--4 { grid-template-columns: repeat(4, 1fr); }
 .step {
   padding: 28px 24px;
   border-right: 1px solid var(--cp-border);
@@ -551,6 +552,16 @@ nav.nav {
 @media (max-width: 880px) {
   .stdshow__frame { grid-template-columns: 1fr; }
   .stdshow__tree { display: none; }
+  .stdshow { padding: 24px 20px 0; }
+  .stdshow__bar { overflow-x: auto; white-space: nowrap; padding: 6px 10px; }
+  .stdshow__bar .tag { display: none; }
+  .stdshow__doc { padding: 20px 18px; }
+  .stdshow__doc h1 { font-size: 18px; }
+  .stdshow__doc p { font-size: 13px; }
+  .stdshow__doc li { font-size: 13px; }
+  .stdshow__doc code { font-size: 11px; }
+  .stdshow__hint { font-size: 10.5px; }
+  .stdshow__hint .pill-light { padding: 4px 8px; }
 }
 
 /* ============ Quote ============ */
@@ -631,10 +642,35 @@ footer.footer {
 @media (max-width: 880px) {
   .preview__body { grid-template-columns: 1fr; }
   .pv-side { display: none; }
-  .features, .steps { grid-template-columns: 1fr; }
+  .features, .steps, .steps--4 { grid-template-columns: 1fr; }
   .step { border-right: 0; border-bottom: 1px solid var(--cp-border); }
   .step:last-child { border-bottom: 0; }
   .nav__links { display: none; }
+  .nav__inner { justify-content: space-between; }
+  .pv-actionbar { font-size: 10px; padding: 4px 4px 4px 10px; gap: 2px; white-space: nowrap; }
+  .pv-actionbar__btn { padding: 4px 6px; font-size: 10px; }
+  .pv-actionbar__cta { padding: 5px 8px; font-size: 10px; }
+  .pv-actionbar__kbd { display: none; }
+  .pv-actionbar__sep { margin: 0 2px; }
+  .pv-v { grid-template-columns: auto 1fr; column-gap: 8px; padding: 10px 12px; }
+  .pv-v__cb { display: none; }
+  .pv-v__chev { display: none; }
+  .pv-v__rule { font-size: 12px; }
+  .pv-v__meta { font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+  .pv-main { padding: 16px 14px 70px; gap: 10px; }
+  .pv-main h3 { font-size: 18px; }
+  .pv-main__sub { font-size: 12px; }
+  .wild__inner { grid-template-columns: 1fr; gap: 14px; padding: 20px; }
+  .wild__inner::before { display: none; }
+  .hero h1 { font-size: clamp(32px, 8vw, 44px); }
+  .hero p { font-size: 16px; }
+  .hero__meta { gap: 12px; }
+  .section { padding: 64px 20px; }
+  .section__hd h2 { font-size: clamp(26px, 6vw, 36px); }
+  .quote blockquote { font-size: clamp(18px, 4vw, 24px); }
+  .ctastrip { padding: 48px 20px; margin: 0 20px 48px; }
+  .ctastrip h2 { font-size: clamp(24px, 5vw, 32px); }
+  footer.footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
 }
 </style>
 </head>
@@ -812,7 +848,7 @@ footer.footer {
     <div class="section__hd">
       <span class="eyebrow"><span class="pill">the problem</span> A pattern we keep seeing.</span>
       <p style="font-size:18px;color:var(--cp-fg-2);margin-bottom:18px;letter-spacing:-0.01em">You started fast. AI wrote the boilerplate, scaffolded the routes, filled in the components. Shipping felt effortless &mdash; for a while.</p>
-      <h2>Then six months in, you're <span class="mono">not building</span> anymore. You're untangling.</h2>
+      <h2>Then two months in, you're <span class="mono">not building</span> anymore. You're untangling.</h2>
       <p>The code <em style="color:var(--cp-fg);font-style:italic">works</em>. But every file looks like it was written by a different person &mdash; because it was. A different conversation, a different prompt, a different day.</p>
     </div>
   </section>
@@ -826,7 +862,7 @@ footer.footer {
         <span class="meta">2.4k upvotes</span>
       </div>
       <div class="wild__quotes">
-        <q>vibe coded for 6 months. my codebase is a disaster.</q>
+        <q>vibe coded for 2 months. my codebase is a disaster.</q>
         <q class="muted">new file here, duplicate function there, 3 different ways to handle the same thing across the codebase.</q>
         <q class="muted">the generation was fast. the cleanup is a nightmare.</q>
       </div>
@@ -867,13 +903,15 @@ footer.footer {
     </div>
   </section>
 
-  <!-- ============ Quote ============ -->
+  <!-- ============ Quote (commented out for future use) ============ -->
+  <!--
   <section class="quote">
     <blockquote>
       &ldquo;First time my team's architectural rules actually <span class="mono">stuck</span>. We stopped re-litigating the same drift in every PR &mdash; the agents just don't write it that way anymore.&rdquo;
     </blockquote>
     <cite>&mdash; eng lead at a Series B startup &middot; 40 engineers &middot; 6 repos</cite>
   </section>
+  -->
 
   <!-- ============ The fix / how ============ -->
   <section class="section" id="standards" style="padding-top:0">
@@ -882,7 +920,7 @@ footer.footer {
       <h2>Write your standards <span class="mono">once</span>. Deploy them everywhere your team codes.</h2>
       <p>Four commands. No new framework, no DSL to learn. Codeplaybook reads your repo, writes to your agents, and gets out of the way.</p>
     </div>
-    <div class="steps" style="grid-template-columns:repeat(4,1fr)">
+    <div class="steps steps--4">
       <div class="step">
         <div class="step__num">01 &middot; prescribe</div>
         <div class="step__title">Pick a blueprint</div>

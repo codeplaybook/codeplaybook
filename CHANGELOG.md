@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.7] - 2026-05-06
+
+### Added
+
+- OpenAI Codex agent adapter
+- Interactive tool hints — workflows now nudge agents to use native interactive selection tools
+
+### Changed
+
+- Merged prescribe workflow into onboard — single entry point with "Scan my code" or "Start with a blueprint" paths
+- Removed commands concept entirely — product is now standards-only
+- CLI init defaults to no agents selected (user must explicitly choose)
+- "Let me review drafts" flow now waits in-conversation instead of requiring re-run
+- All "re-run this workflow" messages replaced with specific command names
+
+### Removed
+
+- `workflows/prescribe.md` — merged into onboard
+- Commands format, generation, and deployment from all workflows, blueprints, analyses, and adapters
+- `$AGENT_COMMANDS_DIR` from all agent adapters
+
 ## [0.0.6] - 2026-05-03
 
 ### Added

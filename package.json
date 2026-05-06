@@ -1,6 +1,6 @@
 {
   "name": "codeplaybook",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Agent-agnostic coding standards for any codebase. One source of truth, deployed to Claude Code, Cursor, GitHub Copilot, or OpenAI Codex.",
   "type": "commonjs",
   "bin": {

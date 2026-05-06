@@ -1,6 +1,6 @@
 # Development Workflow
 
-Identify CI pipeline steps that cannot be reproduced locally and propose a pre-PR quality check command.
+Identify CI pipeline steps that cannot be reproduced locally and propose standards for CI-local parity.
 
 ## What to Look For
 
@@ -138,32 +138,9 @@ INSIGHT:
 
 ## Output Suggestions
 
-### Command: Pre-PR Quality Check
+### Standard: CI-Local Parity
 
-```yaml
-name: "codeplaybook-pre-pr-check"
-summary: "Run all CI-equivalent checks locally after completing a feature or before creating a PR"
-whenToUse:
-  - "Before creating a pull request"
-  - "After completing a feature to verify CI will pass"
-  - "When CI fails and you want to debug locally"
-contextValidationCheckpoints:
-  - "Are all dependencies installed?"
-  - "Is the development environment configured?"
-steps:
-  - name: "Run linting"
-    description: "Execute lint checks"
-    codeSnippet: "[extracted from CI or local scripts]"
-  - name: "Run type checking"
-    description: "Verify type correctness"
-    codeSnippet: "[extracted from CI or local scripts]"
-  - name: "Run tests"
-    description: "Execute test suite"
-    codeSnippet: "[extracted from CI or local scripts]"
-  - name: "Run build"
-    description: "Verify build succeeds"
-    codeSnippet: "[extracted from CI or local scripts]"
-```
+For each CI step that lacks a local equivalent, generate a standard requiring the local entrypoint to exist.
 
 ## Gap Categories
 

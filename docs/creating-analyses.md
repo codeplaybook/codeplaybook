@@ -1,6 +1,6 @@
 # Creating Analyses
 
-An analysis defines how to detect a specific type of pattern in a codebase and what standards/commands to generate from the findings.
+An analysis defines how to detect a specific type of pattern in a codebase and what standards to generate from the findings.
 
 ## Quick start
 
@@ -35,7 +35,6 @@ Define how to analyze:
 
 Define what to generate:
 - **Standards**: Template for standards the analysis should produce
-- **Commands**: Template for commands (if applicable)
 
 ## Tips
 

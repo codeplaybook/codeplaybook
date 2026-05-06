@@ -104,62 +104,6 @@ All page and route files
 * Route-level data fetching (SSR/SSG loaders) belongs in the page file or a co-located loader, not in shared components
 * Keep pages thin — if a page file exceeds ~50 lines of logic, extract a feature component
 
-## Commands
-
-### Command: codeplaybook-create-feature-ui
-
-Scaffold a frontend feature with component layers, data layer, and state management following the project's architecture.
-
-#### When to Use
-- Adding a new user-facing feature (e.g., user profile, order history, settings page)
-- Extracting a god component into a properly layered feature
-- Starting a new vertical slice in the frontend
-
-#### Context Validation Checkpoints
-- What is the feature name? (e.g., users, orders, settings, dashboard)
-- Does it need data fetching? (API calls)
-- Does it need its own state? (beyond what comes from props)
-- Does it need a route/page?
-
-#### Steps
-
-##### 1. Create feature directory
-Create the feature directory in the features root with sub-directories for components, data, and state.
-
-##### 2. Create container component
-Create the main container component that:
-- Uses the data layer to fetch/mutate data
-- Uses the state layer for feature-local state
-- Passes data to presentational components via props
-
-##### 3. Create presentational components
-Create the key UI components:
-- List component (displays collection)
-- Card/Item component (displays single entity)
-- Form component (handles input)
-All receive data via props, emit events for actions.
-
-##### 4. Create data layer
-Create the feature's API abstraction:
-- Functions for each API operation (get, create, update, delete)
-- Request/response types
-- Wrapped in the framework's data fetching pattern
-
-##### 5. Create state layer (if needed)
-Create feature-scoped state for:
-- UI state (filters, selections, pagination)
-- Optimistic updates
-- Derived/computed values
-
-##### 6. Create page/route (if needed)
-Create a thin page that composes the feature's container component and connects route parameters.
-
-##### 7. Create test file
-Create tests for:
-- Container component with mocked data layer
-- Presentational components with props
-- Data layer functions (mocked HTTP)
-
 ## Framework Variants
 
 ### React

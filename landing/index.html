@@ -401,18 +401,19 @@ nav.nav {
 .steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border: 1px solid var(--cp-border);
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--cp-bg-elev-1);
+  gap: 14px;
 }
 .steps--4 { grid-template-columns: repeat(4, 1fr); }
+.steps--3 { grid-template-columns: repeat(3, 1fr); }
 .step {
+  background: var(--cp-bg-elev-1);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
   padding: 28px 24px;
-  border-right: 1px solid var(--cp-border);
   display: flex; flex-direction: column; gap: 12px;
+  transition: border-color 150ms;
 }
-.step:last-child { border-right: 0; }
+.step:hover { border-color: var(--cp-border-strong); }
 .step__num { font-family: var(--cp-font-mono); font-size: 11px; color: var(--cp-accent); letter-spacing: 0.04em; text-transform: uppercase; }
 .step__title { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
 .step__desc { color: var(--cp-fg-2); font-size: 14px; }
@@ -642,9 +643,7 @@ footer.footer {
 @media (max-width: 880px) {
   .preview__body { grid-template-columns: 1fr; }
   .pv-side { display: none; }
-  .features, .steps, .steps--4 { grid-template-columns: 1fr; }
-  .step { border-right: 0; border-bottom: 1px solid var(--cp-border); }
-  .step:last-child { border-bottom: 0; }
+  .features, .steps, .steps--4, .steps--3 { grid-template-columns: 1fr; }
   .nav__links { display: none; }
   .nav__inner { justify-content: space-between; }
   .pv-actionbar { font-size: 10px; padding: 4px 4px 4px 10px; gap: 2px; white-space: nowrap; }
@@ -747,6 +746,7 @@ footer.footer {
       <span>claude code</span>
       <span>cursor</span>
       <span>github copilot</span>
+      <span>openai codex</span>
     </div>
   </div>
 
@@ -918,29 +918,23 @@ footer.footer {
     <div class="section__hd">
       <span class="eyebrow"><span class="pill">the fix</span> One folder. Every agent.</span>
       <h2>Write your standards <span class="mono">once</span>. Deploy them everywhere your team codes.</h2>
-      <p>Four commands. No new framework, no DSL to learn. Codeplaybook reads your repo, writes to your agents, and gets out of the way.</p>
+      <p>Three commands. No new framework, no DSL to learn. Codeplaybook reads your repo, writes to your agents, and gets out of the way.</p>
     </div>
-    <div class="steps steps--4">
+    <div class="steps steps--3">
       <div class="step">
-        <div class="step__num">01 &middot; prescribe</div>
-        <div class="step__title">Pick a blueprint</div>
-        <div class="step__desc">Hexagonal, clean architecture, feature slices. Curated standards generated upfront &mdash; your agent follows the rules from day one.</div>
-        <div class="step__code"><span class="a">/codeplaybook-prescribe</span></div>
-      </div>
-      <div class="step">
-        <div class="step__num">02 &middot; onboard</div>
-        <div class="step__title">Mine your repo</div>
-        <div class="step__desc">Scan an existing codebase for recurring patterns and turn them into enforceable standards. Bring drift into the open.</div>
+        <div class="step__num">01 &middot; onboard</div>
+        <div class="step__title">Set up standards</div>
+        <div class="step__desc">Scan your code to discover conventions you already follow, or pick an architectural blueprint to start with pre-built standards. One command, two paths.</div>
         <div class="step__code"><span class="a">/codeplaybook-onboard</span></div>
       </div>
       <div class="step">
-        <div class="step__num">03 &middot; audit</div>
+        <div class="step__num">02 &middot; audit</div>
         <div class="step__title">Find violations</div>
         <div class="step__desc">See every drift with rule, evidence, and a suggested fix. Approve before anything changes.</div>
         <div class="step__code"><span class="a">/codeplaybook-audit</span></div>
       </div>
       <div class="step">
-        <div class="step__num">04 &middot; sync</div>
+        <div class="step__num">03 &middot; sync</div>
         <div class="step__title">Deploy everywhere</div>
         <div class="step__desc">One source of truth, compiled to whatever each agent expects. Add a new tool tomorrow &mdash; it just picks up the same rules.</div>
         <div class="step__code"><span class="a">/codeplaybook-sync</span></div>

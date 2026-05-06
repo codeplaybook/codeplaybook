@@ -1,12 +1,12 @@
 # Creating Blueprints
 
-A blueprint defines an architectural pattern with standards, commands, and framework-specific variants.
+A blueprint defines an architectural pattern with standards and framework-specific variants.
 
 ## Quick start
 
 1. Copy `blueprints/_template.md` to `blueprints/your-pattern.md`
 2. Fill in all sections
-3. Test by running `npx codeplaybook init` and then `/codeplaybook-prescribe`
+3. Test by running `npx codeplaybook init` and then `/codeplaybook-onboard` (select "Start with a blueprint")
 4. Submit a PR
 
 ## Structure
@@ -43,23 +43,6 @@ At least 2 standards. Each standard becomes a file in `.codeplaybook/standards/`
 #### Rules
 * {Imperative rule, max ~25 words}
 * {Another rule}
-```
-
-### Commands
-
-At least 1 command. Each command becomes a file in `.codeplaybook/commands/`.
-
-```markdown
-### Command: {name}
-
-{What it does.}
-
-#### When to Use
-- {Scenario}
-
-#### Steps
-##### 1. {Step}
-{Instructions}
 ```
 
 ### Framework Variants

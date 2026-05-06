@@ -21,7 +21,6 @@ An agent adapter teaches codeplaybook how to install skills for a specific codin
 
 Workflow files contain placeholder variables:
 - `$AGENT_RULES_DIR` → where your agent reads rule files
-- `$AGENT_COMMANDS_DIR` → where your agent reads command files
 - `$AGENT_CONFIG_FILE` → your agent's top-level config file
 
 Your adapter replaces these with concrete paths.

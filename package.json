@@ -1,7 +1,7 @@
 {
   "name": "codeplaybook",
   "version": "0.0.6",
-  "description": "Agent-agnostic coding standards and commands for any codebase. One source of truth, deployed to Claude Code, Cursor, or GitHub Copilot.",
+  "description": "Agent-agnostic coding standards for any codebase. One source of truth, deployed to Claude Code, Cursor, GitHub Copilot, or OpenAI Codex.",
   "type": "commonjs",
   "bin": {
     "codeplaybook": "./bin/cli.js"
@@ -12,6 +12,8 @@
     "claude-code",
     "cursor",
     "copilot",
+    "codex",
+    "openai",
     "ai-coding",
     "hexagonal",
     "clean-architecture",
@@ -44,6 +46,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "better-sqlite3": "^12.9.0"
+    "better-sqlite3": "^12.9.0",
+    "enquirer": "^2.4.1"
   }
 }

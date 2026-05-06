@@ -48,33 +48,6 @@
 
 ---
 
-## Commands
-
-### Command: {command-name}
-
-{What the command does and why it's useful.}
-
-#### When to Use
-
-- {Scenario 1}
-- {Scenario 2}
-
-#### Context Validation Checkpoints
-
-- {Question to validate before proceeding}
-
-#### Steps
-
-##### 1. {Step Name}
-
-{What to do and how.}
-
-##### 2. {Step Name}
-
-{What to do and how.}
-
----
-
 ## Framework Variants
 
 ### NestJS

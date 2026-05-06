@@ -68,63 +68,6 @@ All feature directories
 * Tests for a feature live inside the feature directory (colocated), not in a separate test tree
 * Feature-specific database entities or models belong inside the feature directory
 
-## Commands
-
-### Command: codeplaybook-create-feature
-
-Scaffold a complete feature slice with all required files following the project's established pattern.
-
-#### When to Use
-- Adding a new domain concept that needs CRUD or business logic
-- Starting a new vertical slice for a team to own
-- Extracting a cross-cutting concern into its own isolated feature
-
-#### Context Validation Checkpoints
-- What is the feature name? (e.g., users, orders, payments, notifications)
-- What operations does it need? (CRUD, specific actions, event handling)
-- Does it need a database entity/model?
-- Does it need to communicate with other features? (through events or shared kernel)
-
-#### Steps
-
-##### 1. Create feature directory
-Create the feature directory in the features root with the plural domain noun name.
-
-##### 2. Create the controller/handler
-Create the feature's HTTP controller (or gRPC handler, event handler) with:
-- Route prefix matching the feature name
-- Stub methods for each operation (create, read, update, delete, or custom)
-- Proper decorator/annotations for the framework
-
-##### 3. Create the service
-Create the feature's service with:
-- Constructor injection for the repository and any shared dependencies
-- Method stubs matching the controller operations
-- Business logic placeholder comments
-
-##### 4. Create the repository (if needed)
-Create the feature's data access layer:
-- Interface/abstract class defining the data operations
-- Concrete implementation for the project's database
-
-##### 5. Create DTOs
-Create request/response DTOs for the feature:
-- Create DTO (input for creation)
-- Update DTO (input for updates)
-- Response DTO (output shape)
-
-##### 6. Create the entity/model (if needed)
-Create the database entity inside the feature directory.
-
-##### 7. Register the feature
-Wire the feature into the application's module/routing system.
-
-##### 8. Create test file
-Create a test file for the service with:
-- Mock repository
-- Tests for each business operation
-- Follow the project's test conventions
-
 ## Framework Variants
 
 ### NestJS

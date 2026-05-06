@@ -73,19 +73,4 @@ For each finding above the reporting threshold:
 * {Rule to prevent the inconsistency}
 ```
 
-### Commands to generate
-
-{If this analysis should also generate commands, describe them:}
-
-```markdown
-# {Suggested Command Name}
-
-{What the command helps do}
-
-## Steps
-
-### 1. {Step}
-{Instructions}
-```
-
-{If this analysis only generates standards (no commands), write: "This analysis generates standards only."}
+This analysis generates standards only.

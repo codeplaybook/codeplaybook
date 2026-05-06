@@ -4,7 +4,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
 const { detectAgents } = require('../src/detect');
 const { assembleContent } = require('../src/assemble');
 const { installForAgent } = require('../src/install');
@@ -59,13 +58,6 @@ async function runInit() {
   let selected = detected;
 
   if (detected.length === 0) {
-    console.log('  No coding agents detected. Select agents to set up:');
-    console.log();
-    adapters.forEach((a, i) => {
-      console.log(`    ${i + 1}. ${a.displayName}`);
-    });
-    console.log();
-
     const choices = await promptAgentSelection(adapters);
 
     if (choices.length === 0) {
@@ -132,7 +124,7 @@ async function runInit() {
   console.log('  Next steps:');
   console.log('    1. Open your coding agent (Claude Code, Cursor, etc.)');
   console.log('    2. Run /codeplaybook-onboard to discover patterns in your code');
-  console.log('    3. Or run /codeplaybook-prescribe to declare architecture upfront');
+  console.log('    3. Or choose "Start with a blueprint" during onboard to declare architecture upfront');
   console.log();
 }
 
@@ -268,29 +260,26 @@ async function runDashboard(args) {
   startDashboard(dbPath, port);
 }
 
-function promptAgentSelection(adapters) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
+async function promptAgentSelection(adapters) {
+  const { MultiSelect } = require('enquirer');
 
-  return new Promise((resolve) => {
-    const defaultValue = adapters.map((_, i) => i + 1).join(',');
-    rl.question(`  Enter numbers separated by commas (default: all): `, (answer) => {
-      rl.close();
-      const trimmed = answer.trim();
-      const numbersStr = trimmed === '' ? defaultValue : trimmed;
+  console.log('  No coding agents detected.');
+  console.log();
 
-      const numbers = [...new Set(
-        numbersStr
-          .split(',')
-          .map(s => parseInt(s.trim(), 10))
-          .filter(n => !isNaN(n) && n >= 1 && n <= adapters.length)
-      )];
-
-      resolve(numbers.map(n => adapters[n - 1]));
+  try {
+    const prompt = new MultiSelect({
+      name: 'agents',
+      message: 'Select agents to set up (space to toggle, enter to confirm)',
+      choices: adapters.map(a => ({ name: a.displayName, value: a.name }))
     });
-  });
+
+    const selectedNames = await prompt.run();
+    return adapters.filter(a => selectedNames.includes(a.displayName));
+  } catch (_) {
+    // User pressed Ctrl+C
+    console.log();
+    process.exit(0);
+  }
 }
 
 function loadAdapters() {
@@ -312,8 +301,7 @@ function printHelp() {
     npx codeplaybook --version                  Show version
 
   Workflows (run inside your coding agent):
-    /codeplaybook-prescribe   Declare architecture → generate standards
-    /codeplaybook-onboard     Discover patterns → generate standards
+    /codeplaybook-onboard     Scan code or pick a blueprint → generate standards
     /codeplaybook-audit       Audit code against standards → report + fix
     /codeplaybook-sync        Re-deploy after editing standards
 

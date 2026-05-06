@@ -46,8 +46,8 @@ Takes assembled content and returns an array of file descriptors to write.
   ],
   workflows: {
     onboard: '...',   // Full markdown content of onboard workflow
-    prescribe: '...', // Full markdown content of prescribe workflow
-    sync: '...'       // Full markdown content of sync workflow
+    sync: '...',      // Full markdown content of sync workflow
+    audit: '...'      // Full markdown content of audit workflow
   }
 }
 ```
@@ -59,7 +59,7 @@ Array of `{ path, content }` objects:
 ```javascript
 [
   { path: '.agent/skills/codeplaybook-onboard.md', content: '...' },
-  { path: '.agent/skills/codeplaybook-prescribe.md', content: '...' },
+  { path: '.agent/skills/codeplaybook-sync.md', content: '...' },
   // ...
 ]
 ```
@@ -73,7 +73,6 @@ Workflow content contains placeholder variables that must be resolved to agent-s
 | Variable | Description | Example (Claude Code) |
 |----------|-------------|-----------------------|
 | `$AGENT_RULES_DIR` | Where the agent reads rule files | `.claude/rules/` |
-| `$AGENT_COMMANDS_DIR` | Where the agent reads command files | `.claude/commands/` |
 | `$AGENT_CONFIG_FILE` | Agent's top-level config file | `CLAUDE.md` |
 
 Use string replacement:
@@ -82,7 +81,6 @@ Use string replacement:
 function resolveVars(text) {
   return text
     .replace(/\$AGENT_RULES_DIR/g, '.your-agent/rules/')
-    .replace(/\$AGENT_COMMANDS_DIR/g, '.your-agent/commands/')
     .replace(/\$AGENT_CONFIG_FILE/g, '.your-agent/config.md');
 }
 ```
@@ -159,7 +157,6 @@ module.exports = {
 function resolveVars(text) {
   return text
     .replace(/\$AGENT_RULES_DIR/g, '.myagent/rules/')
-    .replace(/\$AGENT_COMMANDS_DIR/g, '.myagent/commands/')
     .replace(/\$AGENT_CONFIG_FILE/g, '.myagent/config.md');
 }
 ```

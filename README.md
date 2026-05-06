@@ -29,10 +29,9 @@ Different formats. Different folders. Same content copied over and over.
 
 **Codeplaybook generates your standards once in `.codeplaybook/` and deploys them to every agent you use.**
 
-- **Prescribe** architecture upfront — pick hexagonal, clean architecture, or feature slices and get standards generated from curated blueprints. Your agent follows the rules from day one.
-- **Onboard** your existing codebase — scan for recurring patterns and turn them into enforceable standards.
+- **Onboard** your project — scan your existing code for patterns, or pick an architectural blueprint to start with pre-built standards. One command, two paths.
 - **Audit** your code against those standards — find violations, fix them with confirmation.
-- **Sync** everywhere — one source of truth, deployed to Claude Code, Cursor, and Copilot automatically.
+- **Sync** everywhere — one source of truth, deployed to Claude Code, Cursor, Copilot, and Codex automatically.
 
 No cloud. No database. Just local markdown files you own and control.
 
@@ -44,7 +43,7 @@ npx codeplaybook init
 
 The CLI detects which coding agents you use and installs the right skills automatically.
 
-**Supported agents:** Claude Code, Cursor, GitHub Copilot
+**Supported agents:** Claude Code, Cursor, GitHub Copilot, OpenAI Codex
 
 **Alternative install (from GitHub):**
 ```bash
@@ -58,13 +57,9 @@ npx codeplaybook init
   → detects your agent (Claude Code, Cursor, Copilot)
   → installs skills for that agent
 
-/codeplaybook-prescribe
-  → pick an architecture (hexagonal, clean, feature slices)
-  → generates standards + commands in .codeplaybook/
-
 /codeplaybook-onboard
-  → analyzes your codebase for recurring patterns
-  → generates standards + commands in .codeplaybook/
+  → choose: scan your code or pick a blueprint
+  → generates standards in .codeplaybook/
 
 /codeplaybook-audit
   → scans codebase against your standards
@@ -74,33 +69,29 @@ npx codeplaybook init
   → re-deploys .codeplaybook/ to your agent's format
 ```
 
-### Four Workflows
+### Three Workflows
 
-**Prescribe** — Declare your architectural intent upfront. Pick a blueprint, get standards and commands generated from curated patterns. Best for new projects or adopting a new architecture.
-
-**Onboard** — Scan your codebase for recurring patterns and discover conventions worth preserving. Generates standards from what already exists. Best for established projects.
+**Onboard** — Set up coding standards for your project. Choose your path: scan your existing code to discover conventions you already follow, or pick an architectural blueprint to start with pre-built standards. You can do both — scan first, then layer a blueprint on top.
 
 **Audit** — Check if your codebase actually follows the standards. Reports violations with file paths and line numbers. Offers to fix them with your confirmation.
 
 **Sync** — Re-deploy standards from `.codeplaybook/` to your agent's format after manual edits.
 
-Use them together: prescribe first, then onboard finds additional patterns, then audit enforces them over time.
+Use them together: onboard sets up your standards, then audit enforces them over time.
 
 ## What Gets Generated
 
 ```
 your-project/
 ├── .codeplaybook/                    ← agent-agnostic source of truth
-│   ├── standards/
-│   │   ├── codeplaybook-hexagonal-layers.md
-│   │   └── codeplaybook-test-conventions.md
-│   └── commands/
-│       ├── codeplaybook-create-usecase.md
-│       └── codeplaybook-pre-pr-check.md
+│   └── standards/
+│       ├── codeplaybook-hexagonal-layers.md
+│       └── codeplaybook-test-conventions.md
 │
 ├── .claude/rules/codeplaybook-*.md   ← Claude Code deployment
 ├── .cursor/rules/codeplaybook-*.md   ← Cursor deployment
-└── .github/instructions/codeplaybook-*.md  ← Copilot deployment
+├── .github/instructions/codeplaybook-*.md  ← Copilot deployment
+└── .codex/rules/codeplaybook-*.md    ← Codex deployment
 ```
 
 Edit files in `.codeplaybook/`, then run `/codeplaybook-sync` to re-deploy to your agent.

@@ -43,7 +43,7 @@ If no standard files found, print:
 
 ```
 No standards found in .codeplaybook/standards/.
-Run /codeplaybook-onboard or /codeplaybook-prescribe first to generate standards.
+Run /codeplaybook-onboard first to generate standards.
 ```
 
 Exit the workflow.
@@ -225,13 +225,13 @@ After saving, do NOT print any message — the results will be surfaced in Step 
 
 ## Step 4 — Ask User
 
-After presenting the report, ask via AskUserQuestion:
+After presenting the report, present the user with options and wait for their selection (use available interactive tools to ask questions to the user):
 
 ```
 Results saved to audit history. How would you like to proceed?
 ```
 
-With options:
+Options:
 
 - **Fix all** — Propose fixes for every violation, one at a time
 - **Fix selected** — Pick which violations to address
@@ -318,7 +318,7 @@ Apply this fix? (yes / skip / stop)
 
 ### 5c — Ask for confirmation
 
-Ask via AskUserQuestion with options:
+Present the user with options and wait for their selection (use available interactive tools to ask questions to the user):
 - **Yes** — Apply the change
 - **Skip** — Move to next violation without changing this file
 - **Stop** — Stop fixing, keep remaining violations unfixed
@@ -392,7 +392,7 @@ If fixing one violation would affect code near another violation in the same fil
 
 ### Not a git repository
 
-Unlike onboard/prescribe, audit does NOT require a git repository. It works on any directory with `.codeplaybook/standards/`.
+Unlike onboard, audit does NOT require a git repository. It works on any directory with `.codeplaybook/standards/`.
 
 ### audit-save fails
 

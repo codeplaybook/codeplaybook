@@ -33,11 +33,11 @@ function loadDir(dirPath) {
 
 /**
  * Load workflow files as a keyed object.
- * Returns { onboard, prescribe, sync, audit } with content strings.
+ * Returns { onboard, sync, audit } with content strings.
  */
 function loadWorkflows(dirPath) {
   const result = {};
-  const files = ['onboard.md', 'prescribe.md', 'sync.md', 'audit.md'];
+  const files = ['onboard.md', 'sync.md', 'audit.md'];
 
   for (const f of files) {
     const filePath = path.join(dirPath, f);

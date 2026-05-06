@@ -4,22 +4,25 @@ const fs = require('fs');
 const path = require('path');
 
 const AGENT_VARS = {
-  AGENT_RULES_DIR: '.claude/rules/',
-  AGENT_CONFIG_FILE: 'CLAUDE.md',
+  AGENT_RULES_DIR: '.codex/rules/',
+  AGENT_CONFIG_FILE: 'AGENTS.md',
   AGENT_ANALYSES_DIR: 'references',
   AGENT_BLUEPRINTS_DIR: 'blueprints'
 };
 
 module.exports = {
-  name: 'claude',
-  displayName: 'Claude Code',
+  name: 'codex',
+  displayName: 'OpenAI Codex',
 
   detect(projectPath) {
-    return fs.existsSync(path.join(projectPath, '.claude'));
+    // Codex is detected by .codex/ directory or AGENTS.md in the project root
+    if (fs.existsSync(path.join(projectPath, '.codex'))) return true;
+    if (fs.existsSync(path.join(projectPath, 'AGENTS.md'))) return true;
+    return false;
   },
 
   provision(projectPath) {
-    fs.mkdirSync(path.join(projectPath, '.claude'), { recursive: true });
+    fs.mkdirSync(path.join(projectPath, '.codex'), { recursive: true });
   },
 
   transform(content) {
@@ -27,10 +30,10 @@ module.exports = {
 
     // --- Onboard skill (includes both scan and blueprint paths) ---
     files.push({
-      path: '.claude/skills/codeplaybook-onboard/SKILL.md',
+      path: '.codex/skills/codeplaybook-onboard/SKILL.md',
       content: wrapSkillMd({
         name: 'codeplaybook-onboard',
-        description: 'Set up coding standards — scan your code for patterns or pick an architectural blueprint. Creates agent-agnostic standards in .codeplaybook/, then deploys as .claude/rules/.',
+        description: 'Set up coding standards — scan your code for patterns or pick an architectural blueprint. Creates agent-agnostic standards in .codeplaybook/, then deploys rules.',
         body: resolveVars(content.workflows.onboard)
       })
     });
@@ -38,7 +41,7 @@ module.exports = {
     // Copy analysis reference files into the onboard skill
     for (const analysis of content.analyses) {
       files.push({
-        path: `.claude/skills/codeplaybook-onboard/references/${analysis.filename}`,
+        path: `.codex/skills/codeplaybook-onboard/references/${analysis.filename}`,
         content: analysis.content
       });
     }
@@ -46,24 +49,24 @@ module.exports = {
     // Copy blueprint files into the onboard skill
     for (const blueprint of content.blueprints) {
       files.push({
-        path: `.claude/skills/codeplaybook-onboard/blueprints/${blueprint.filename}`,
+        path: `.codex/skills/codeplaybook-onboard/blueprints/${blueprint.filename}`,
         content: blueprint.content
       });
     }
 
     // --- Sync skill ---
     files.push({
-      path: '.claude/skills/codeplaybook-sync/SKILL.md',
+      path: '.codex/skills/codeplaybook-sync/SKILL.md',
       content: wrapSkillMd({
         name: 'codeplaybook-sync',
-        description: 'Re-deploy .codeplaybook/ standards to .claude/rules/ without re-analyzing the codebase.',
+        description: 'Re-deploy .codeplaybook/ standards to agent rules without re-analyzing the codebase.',
         body: resolveVars(content.workflows.sync)
       })
     });
 
     // --- Audit skill ---
     files.push({
-      path: '.claude/skills/codeplaybook-audit/SKILL.md',
+      path: '.codex/skills/codeplaybook-audit/SKILL.md',
       content: wrapSkillMd({
         name: 'codeplaybook-audit',
         description: 'Audit codebase against .codeplaybook/ standards. Reports violations and offers to fix them.',

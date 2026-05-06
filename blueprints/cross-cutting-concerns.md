@@ -85,45 +85,6 @@ All backend source files handling external input (controllers, handlers, API rou
 
 ---
 
-## Commands
-
-### Command: create-error-class
-
-Create a new domain-specific error class following the project's error handling pattern.
-
-#### When to Use
-
-- Adding a new feature that can fail in domain-specific ways
-- Replacing a generic `throw new Error(...)` with a typed error
-
-#### Context Validation Checkpoints
-
-- Does an error class for this domain concept already exist?
-- What HTTP status code should this error map to?
-
-#### Steps
-
-##### 1. Create the error class
-
-Create a new error class in the appropriate location:
-- If the error is feature-specific, place it in the feature directory
-- If the error is shared across features, place it in the shared/errors directory
-
-The error class must include:
-- A machine-readable error code (constant string)
-- A human-readable message (parameterizable)
-- The original cause (optional, for wrapping)
-
-##### 2. Register the error mapping
-
-If the project uses a global error handler or error-to-HTTP-status mapping, add the new error class to it with the appropriate status code.
-
-##### 3. Use the error
-
-Replace generic throws with the new typed error in the relevant code paths.
-
----
-
 ## Framework Variants
 
 ### NestJS

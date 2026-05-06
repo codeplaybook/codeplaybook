@@ -1,6 +1,6 @@
 # Contributing to Codeplaybook
 
-Thank you for your interest in contributing! Codeplaybook thrives on community contributions -- new blueprints, analyses, framework variants, and agent adapters.
+Thank you for your interest in contributing! Codeplaybook thrives on community contributions -- new blueprints, analyses, framework variants, and agent adapters. The project focuses purely on standards.
 
 ## Quick Start
 
@@ -17,15 +17,14 @@ Thank you for your interest in contributing! Codeplaybook thrives on community c
 Add a new architectural pattern (e.g., MVC, event-driven, microservices).
 
 1. Copy `blueprints/_template.md`
-2. Fill in all sections: introduction, standards, commands, framework variants
+2. Fill in all sections: introduction, standards, framework variants
 3. Place in `blueprints/your-pattern.md`
 4. Submit a PR
 
 **Requirements:**
-- At least 2 standards and 1 command
+- At least 2 standards
 - At least 2 framework variants
 - Each standard needs Scope and Rules sections
-- Each command needs When to Use, Context Validation Checkpoints, and Steps
 
 ### New Framework Variant (Low barrier)
 
@@ -49,7 +48,7 @@ Add a new code analysis type (e.g., security patterns, accessibility, performanc
 **Requirements:**
 - Clear detection patterns (what file patterns, naming conventions, markers to look for)
 - Reporting thresholds (when to report vs skip)
-- Output format (how findings become standards/commands)
+- Output format (how findings become standards)
 
 ### New Agent Adapter (Medium barrier)
 
@@ -63,7 +62,7 @@ Add support for a new coding agent (e.g., Continue.dev, Windsurf, Codex).
 **Requirements:**
 - `detect(projectPath)` returns true when the agent is present
 - `transform(content)` returns an array of `{ path, content }` file descriptors
-- Variable resolution: replace `$AGENT_RULES_DIR`, `$AGENT_COMMANDS_DIR`, `$AGENT_CONFIG_FILE` in workflow content
+- Variable resolution: replace `$AGENT_RULES_DIR`, `$AGENT_CONFIG_FILE` in workflow content
 
 ### Content Improvements (Low barrier)
 

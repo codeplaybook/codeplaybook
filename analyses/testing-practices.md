@@ -1,6 +1,6 @@
 # Testing Practices
 
-Analyze the codebase's testing patterns across three dimensions: test coverage, test data construction, and test file structure. Propose standards for consistency and a scaffolding command for new tests.
+Analyze the codebase's testing patterns across three dimensions: test coverage, test data construction, and test file structure. Propose standards for consistency.
 
 ## Part 1: Test Coverage
 
@@ -155,7 +155,7 @@ INSIGHT:
 
 ### What to Look For
 
-Determine the common structure of test files: what they import, how they organize describe/it blocks, what setup/teardown they use, and what assertion style they prefer. This is the basis for a "create-test" scaffolding command.
+Determine the common structure of test files: what they import, how they organize describe/it blocks, what setup/teardown they use, and what assertion style they prefer.
 
 ### Structure Elements to Extract
 
@@ -242,30 +242,3 @@ INSIGHT:
 - "When a shared mock does not exist for a common entity, create one in `[mock directory]`"
 - "Use `[typed mock pattern]` for service mocks; avoid `as any` casts"
 
-### Command: Create Test
-
-```yaml
-name: "codeplaybook-create-test"
-summary: "Scaffold a test file with correct imports, mocks, and structure for any new or untested source file"
-whenToUse:
-  - "Creating a new class, service, or module that needs tests"
-  - "Adding test coverage for an existing untested file"
-contextValidationCheckpoints:
-  - "What is the source file to test?"
-  - "Does it have external dependencies that need mocking?"
-steps:
-  - name: "Create test file"
-    description: "Create a test file matching the project naming convention"
-    codeSnippet: |
-      [test file template with correct imports, describe block, shared mocks]
-  - name: "Import shared mocks"
-    description: "Import from shared mock/utility directories"
-    codeSnippet: |
-      [import statements from test/__mocks__/ or equivalent]
-  - name: "Write test cases"
-    description: "Add describe/it blocks covering the main behavior"
-  - name: "Run tests"
-    description: "Verify the new test passes"
-    codeSnippet: |
-      [test runner command from project scripts]
-```

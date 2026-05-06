@@ -1,6 +1,6 @@
 # Code Scaffolding
 
-Detect repeating file structures across the codebase and propose scaffolding commands and consistency standards.
+Detect repeating file structures across the codebase and propose consistency standards.
 
 ## What to Look For
 
@@ -218,28 +218,6 @@ INSIGHT:
 ```
 
 ## Output Suggestions
-
-### Command: Scaffolding
-
-```yaml
-name: "codeplaybook-create-[file-type]"
-summary: "Scaffold a new [FileType] with the established project template"
-whenToUse:
-  - "Adding a new [file-type] to the codebase"
-  - "Need consistent [file-type] structure"
-contextValidationCheckpoints:
-  - "What is the name of the new [file-type]?"
-  - "Which module/domain does it belong to?"
-steps:
-  - name: "Create file from template"
-    description: "Create [file-type] with standard structure"
-    codeSnippet: |
-      [extracted template from evidence]
-  - name: "Add to module index"
-    description: "Export from module index if the pattern requires it"
-  - name: "Create test file"
-    description: "Create corresponding test file matching the project convention"
-```
 
 ### Standard: Template Consistency
 

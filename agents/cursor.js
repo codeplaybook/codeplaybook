@@ -5,7 +5,6 @@ const path = require('path');
 
 const AGENT_VARS = {
   AGENT_RULES_DIR: '.cursor/rules/',
-  AGENT_COMMANDS_DIR: '.cursor/commands/',
   AGENT_CONFIG_FILE: '.cursorrules',
   AGENT_ANALYSES_DIR: 'codeplaybook-references',
   AGENT_BLUEPRINTS_DIR: 'codeplaybook-blueprints'
@@ -26,16 +25,12 @@ module.exports = {
   transform(content) {
     const files = [];
 
-    // Cursor uses .cursor/rules/ for rules (similar to Claude but with globs: instead of paths:)
-    // Cursor doesn't have the same "skills" concept, so we install workflows as rule files
-    // that act as instructions the agent follows
-
-    // --- Onboard rule ---
+    // --- Onboard rule (includes both scan and blueprint paths) ---
     const onboardBody = resolveVars(content.workflows.onboard);
     files.push({
       path: '.cursor/rules/codeplaybook-onboard.md',
       content: wrapCursorRule({
-        description: 'Analyze codebase and generate coding standards & commands locally. Creates agent-agnostic standards in .codeplaybook/.',
+        description: 'Set up coding standards — scan your code for patterns or pick an architectural blueprint.',
         body: onboardBody
       })
     });
@@ -47,16 +42,6 @@ module.exports = {
         content: analysis.content
       });
     }
-
-    // --- Prescribe rule ---
-    const prescribeBody = resolveVars(content.workflows.prescribe);
-    files.push({
-      path: '.cursor/rules/codeplaybook-prescribe.md',
-      content: wrapCursorRule({
-        description: 'Declare architectural intent and generate prescribed standards & commands from blueprints.',
-        body: prescribeBody
-      })
-    });
 
     // Copy blueprint files
     for (const blueprint of content.blueprints) {
@@ -71,7 +56,7 @@ module.exports = {
     files.push({
       path: '.cursor/rules/codeplaybook-sync.md',
       content: wrapCursorRule({
-        description: 'Re-deploy .codeplaybook/ standards and commands to .cursor/rules/ without re-analyzing.',
+        description: 'Re-deploy .codeplaybook/ standards to .cursor/rules/ without re-analyzing.',
         body: syncBody
       })
     });
@@ -103,7 +88,6 @@ ${body}`;
 function resolveVars(text) {
   return text
     .replace(/\$AGENT_RULES_DIR/g, AGENT_VARS.AGENT_RULES_DIR)
-    .replace(/\$AGENT_COMMANDS_DIR/g, AGENT_VARS.AGENT_COMMANDS_DIR)
     .replace(/\$AGENT_CONFIG_FILE/g, AGENT_VARS.AGENT_CONFIG_FILE)
     .replace(/\$AGENT_ANALYSES_DIR/g, AGENT_VARS.AGENT_ANALYSES_DIR)
     .replace(/\$AGENT_BLUEPRINTS_DIR/g, AGENT_VARS.AGENT_BLUEPRINTS_DIR);

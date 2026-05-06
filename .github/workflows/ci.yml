@@ -9,17 +9,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22]
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
@@ -37,7 +33,6 @@ jobs:
           test -f blueprints/feature-slices.md
           test -f blueprints/frontend-component-architecture.md
           echo "Blueprints: 4 files OK"
-
           test -f analyses/code-scaffolding.md
           test -f analyses/architecture-boundaries.md
           test -f analyses/testing-practices.md
@@ -45,7 +40,6 @@ jobs:
           test -f analyses/error-handling.md
           test -f analyses/import-patterns.md
           echo "Analyses: 6 files OK"
-
           test -f workflows/onboard.md
           test -f workflows/sync.md
           test -f workflows/audit.md
